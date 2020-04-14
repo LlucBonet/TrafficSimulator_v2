@@ -100,7 +100,7 @@ public abstract class Road extends SimulatedObject {
 		return this._weather;
 	}
 	
-	int getTotalCont() {
+	public int getTotalCont() {
 		return this._totalCont;
 	}
 	
@@ -132,7 +132,7 @@ public abstract class Road extends SimulatedObject {
 		return this._destJunc;
 	}
 
-	int getContLimit() {
+	public int getContLimit() {
 		return this._contLimit;
 	}
 
