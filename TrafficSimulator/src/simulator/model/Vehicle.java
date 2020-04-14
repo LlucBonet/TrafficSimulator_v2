@@ -159,19 +159,19 @@ public class Vehicle extends SimulatedObject implements Comparable<Vehicle> {
 		else throw new IllegalArgumentException("Illegal ContClass for vehicle" + this._id);	
 	}
 	
-	int getContClass(){
+	public int getContClass(){
 		return this._contClass;
 	}
 	
-	int getLocation() {
+	public int getLocation() {
 		return this._location;
 	}
 	
-	Road getRoad() {
+	public Road getRoad() {
 		return this._road;
 	}
 	
-	VehicleStatus getStatus() {
+	public VehicleStatus getStatus() {
 		return this._vStatus;
 	}
 	

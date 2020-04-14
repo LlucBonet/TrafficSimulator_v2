@@ -1,6 +1,7 @@
 package simulator.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +101,6 @@ public class Junction extends SimulatedObject {
 			List<Vehicle> vl = _dqs.dequeue(_queueByRoad.get(_inRoad.get(_greenLightIndex)));
 			for(int i = 0; i < vl.size(); i++) {
 				vl.get(i).moveToNextRoad();
-				//_dqs.dequeue(_queueByRoad.get(_inRoad.get(_greenLightIndex))).remove(vl.get(i));
 				_queueByRoad.get(_inRoad.get(_greenLightIndex)).remove(vl.get(i));
 			}
 		}
@@ -145,11 +145,19 @@ public class Junction extends SimulatedObject {
 	
 	
 	//GETTERS & SETTERS//
-	int get_xCoor() {
+	public int getX() {
 		return this._xCoor;
 	}
 	
-	int get_yCoor() {
+	public int getY() {
 		return this._yCoor;
+	}
+
+	public int getGreenLightIndex() {
+		return _greenLightIndex;
+	}
+	public List<Road> getInRoads() {
+		return Collections.unmodifiableList(new ArrayList<>(_inRoad));
+		
 	}
 }

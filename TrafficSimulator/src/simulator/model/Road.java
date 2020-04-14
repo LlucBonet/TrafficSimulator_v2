@@ -120,15 +120,15 @@ public abstract class Road extends SimulatedObject {
 		this._speedLimit = sl;
 	}
 	
-	int getLength() {
+	public int getLength() {
 		return this._length;
 	}
 	
-	Junction getSrc() {
+	public Junction getSrc() {
 		return this._srcJunc;
 	}
 	
-	Junction getDest() {
+	public Junction getDest() {
 		return this._destJunc;
 	}
 
