@@ -26,4 +26,9 @@ public class NewInterCityRoadEvent extends NewRoadEvent {
 	Road createRoadObject(RoadMap map) throws Exception {
 		return new InterCityRoad(_id, map.getJunction(_srcJ), map.getJunction(_destJ), _maxSpeed, _co2Limit, _weather, _length);
 	}
+	
+	@Override
+	public String toString() {
+		return "New Inter City Road '" + _id + "'";
+	}
 }
