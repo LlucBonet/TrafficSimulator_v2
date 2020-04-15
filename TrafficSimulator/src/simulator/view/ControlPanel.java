@@ -155,7 +155,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 		exit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
+				System.exit(0);
 			}
 		});
 		exit.setIcon(new ImageIcon("icon/exit.png"));

@@ -28,6 +28,7 @@ public class MainWindow extends JFrame {
 		super("Traffic Simulator");
 		_ctrl = ctrl;
 		initGUI();
+		//_ctrl.addObserver(this);
 	}
 	
 	private void initGUI() {
@@ -87,7 +88,7 @@ public class MainWindow extends JFrame {
 
 	private JPanel createViewPanel(JComponent c, String title) {
 		JPanel p = new JPanel(new BorderLayout());
-		p.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK, 2), p.getName()));
+		p.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK, 2), title));
 		p.add(new JScrollPane(c));
 		return p;
 	}
