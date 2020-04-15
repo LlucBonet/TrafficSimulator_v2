@@ -1,9 +1,11 @@
 package simulator.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -16,6 +18,10 @@ import simulator.control.Controller;
 
 public class MainWindow extends JFrame {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Controller _ctrl;
 	
 	public MainWindow(Controller ctrl) {
@@ -44,16 +50,35 @@ public class MainWindow extends JFrame {
 		
 		//tables
 		JPanel eventsView = 
-				createViewPanel(new JTable(new EventsTableModel(_ctrl)), "Events");
+				createViewPanel(new JTable(new EventsTableModel(/*_ctrl*/)), "Events");
 		eventsView.setPreferredSize(new Dimension(500, 200));
 		tablesPanel.add(eventsView);
-		//TODO add other tables
+		
+		JPanel vehiclesView =
+				createViewPanel(new JTable(new EventsTableModel()), "Vehicles");
+		vehiclesView.setPreferredSize(new Dimension(500, 200));
+		tablesPanel.add(vehiclesView);
+		
+		JPanel roadsView =
+				createViewPanel(new JTable(new EventsTableModel()), "Roads");
+		roadsView.setPreferredSize(new Dimension(500, 200));
+		tablesPanel.add(roadsView);
+		
+		JPanel junctionsView =
+				createViewPanel(new JTable(new EventsTableModel()), "Junctions");
+		junctionsView.setPreferredSize(new Dimension(500, 200));
+		tablesPanel.add(junctionsView);
+		
 		
 		//maps
 		JPanel mapView = createViewPanel(new MapComponent(_ctrl), "Map");
 		mapView.setPreferredSize(new Dimension(500, 400));
 		mapsPanel.add(mapView);
-		//TODO add a map for MapByRoadComponent
+		
+		JPanel mapByRoadView = createViewPanel(new MapComponent(_ctrl), "Map by Road");
+		mapByRoadView.setPreferredSize(new Dimension(500, 400));
+		mapsPanel.add(mapByRoadView);
+		
 		
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.pack();
@@ -62,7 +87,7 @@ public class MainWindow extends JFrame {
 
 	private JPanel createViewPanel(JComponent c, String title) {
 		JPanel p = new JPanel(new BorderLayout());
-		//TODO add a frame border to p with title
+		p.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK, 2), p.getName()));
 		p.add(new JScrollPane(c));
 		return p;
 	}
