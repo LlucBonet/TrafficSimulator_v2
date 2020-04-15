@@ -107,7 +107,8 @@ public class Main {
 	}
 	
 	private static void parseTicksOption(CommandLine line) throws ParseException{
-		_ticks = Integer.parseInt(line.getOptionValue("t"));
+		if(line.hasOption("t"))
+			_ticks = Integer.parseInt(line.getOptionValue("t"));
 	}
 	
 	private static void parseModeOption(CommandLine line) throws ParseException{
@@ -175,7 +176,7 @@ public class Main {
 	private static void start(String[] args) throws Exception {
 		initFactories();
 		parseArgs(args);
-		if(_mode == "console") { startBatchMode(); }
+		if(_mode.contentEquals("console")) { startBatchMode(); }
 		else { startGUIMode(); }
 	}
 
