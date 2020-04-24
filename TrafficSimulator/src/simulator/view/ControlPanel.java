@@ -1,24 +1,33 @@
 package simulator.view;
 
 import java.awt.BorderLayout;
-import java.awt.LayoutManager;
+import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import simulator.control.Controller;
+import simulator.misc.Pair;
 import simulator.model.Event;
 import simulator.model.RoadMap;
+import simulator.model.SetContClassEvent;
+import simulator.model.SetWeatherEvent;
 import simulator.model.TrafficSimObserver;
+import simulator.model.Weather;
 
 public class ControlPanel extends JPanel implements TrafficSimObserver {
 
@@ -28,33 +37,142 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 	private static final long serialVersionUID = 1L;
 	
 	private Controller _ctrl;
+	private RoadMap _map;
+	private int  _time;
+	
+	private JToolBar _toolBar;
+	private JButton _loadButton;
+	private JButton _runButton;
+	private JButton _stopButton;
+	private JButton _exitButton;
+	private JButton _changeCO2ClassButton;
+	private JButton _changeWeatherButton;
+	private JSpinner _ticksSpinner;
+	
+	private JFileChooser _fc;
+	
 	private boolean _stopped;
 	
-	public ControlPanel(Controller ctrl) {
+	private MainWindow _parent; //para JDialog
+	
+	ControlPanel(Controller ctrl) {
 		_ctrl = ctrl;
 		_stopped = true;
-		initControlPanel();
-		//_ctrl.addObserver(o);
+		_time = 0;
+		initGUI();
+		_ctrl.addObserver(this);
 	}
 
-//	public ControlPanel(LayoutManager layout) {
-//		super(layout);
-//		// TODO Auto-generated constructor stub
-//	}
-//
-//	public ControlPanel(boolean isDoubleBuffered) {
-//		super(isDoubleBuffered);
-//		// TODO Auto-generated constructor stub
-//	}
-//
-//	public ControlPanel(LayoutManager layout, boolean isDoubleBuffered) {
-//		super(layout, isDoubleBuffered);
-//		// TODO Auto-generated constructor stub
-//	}
-//	
-	private void initControlPanel() {
-		JToolBar tb = createJToolBar();
-		this.add(tb, BorderLayout.PAGE_START);
+	ControlPanel(Controller ctrl, MainWindow parent){
+		_ctrl = ctrl;
+		_stopped = true;
+		_time = 0;
+		initGUI();
+		_parent = parent;
+		_ctrl.addObserver(this);
+	}
+	
+	private void initGUI() {
+		setLayout(new BorderLayout());
+		_toolBar = new JToolBar();
+		
+		//load
+		_fc = new JFileChooser();
+		_fc.setCurrentDirectory(new File("maria/git/TrafficSimulator_v2-Lluc/TrafficSimulator/resources/examples"));
+		_loadButton = new JButton();
+		_loadButton.setToolTipText("Load a file");
+		_loadButton.setIcon(new ImageIcon("resources/icons/open.png"));
+		_loadButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				loadFile();
+			}
+		});
+		_toolBar.add(_loadButton);
+		
+		_toolBar.addSeparator();
+		
+		//change co2 class
+		_changeCO2ClassButton = new JButton();
+		_changeCO2ClassButton.setToolTipText("Change CO2 class of a vehicle");
+		_changeCO2ClassButton.setIcon(new ImageIcon("resources/icons/co2class.png"));
+
+		_changeCO2ClassButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				 changeCO2Class();
+			}
+		});
+		_toolBar.add(_changeCO2ClassButton);
+		
+		//change weather
+		_changeWeatherButton = new JButton();
+		_changeWeatherButton.setToolTipText("Change Weather of a road");
+		_changeWeatherButton.setIcon(new ImageIcon("resources/icons/weather.png"));
+
+		_changeWeatherButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				 changeWeather();
+			}
+		});
+		_toolBar.add(_changeWeatherButton);
+		
+		_toolBar.addSeparator();
+		
+		//run 
+		_runButton = new JButton();
+		_runButton.setToolTipText("Run");
+		_runButton.setIcon(new ImageIcon("resources/icons/run.png"));
+		_runButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(_stopped)
+					run();
+			}
+		});
+		_toolBar.add(_runButton);
+		
+		//stop
+		_stopButton = new JButton();
+		_stopButton.setToolTipText("Stop");	
+		_stopButton.setIcon(new ImageIcon("resources/icons/stop.png"));
+		_stopButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(!_stopped) stop();
+			}
+		});
+		_toolBar.add(_stopButton);
+		
+		//ticks
+		JLabel ticks = new JLabel("Ticks: ");
+		_toolBar.add(ticks);
+		_ticksSpinner = new JSpinner();
+		_ticksSpinner.setValue(10);
+		_ticksSpinner.setPreferredSize(new Dimension(100, _ticksSpinner.getHeight()));
+		_ticksSpinner.setMaximumSize(new Dimension(100, _ticksSpinner.getHeight()));
+		_toolBar.add(_ticksSpinner);
+
+		_toolBar.addSeparator();
+		
+		//exit
+		_exitButton = new JButton();
+		_exitButton.setToolTipText("Exit");
+		_exitButton.setIcon(new ImageIcon("resources/icons/exit.png"));
+		_exitButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				exit();
+			}
+		});
+		_toolBar.add(_exitButton, -1);
+		add(_toolBar, BorderLayout.PAGE_START);
+	}
+	
+	private void loadFile() {
+		int selection = _fc.showOpenDialog(_parent);
+		
 	}
 	
 	private InputStream selectOpenFile() {
@@ -79,91 +197,6 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 		
 		return in;
 	}
-
-	private JToolBar createJToolBar() {
-		JToolBar toolBar = new JToolBar();
-		
-		JButton load = new JButton();
-		load.setActionCommand("load");
-		load.setToolTipText("Load a file");
-		load.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				
-				//InputStream in =
-				//_ctrl.reset();
-				//_ctrl.loadEvents(in);
-				//si el fichero no existe o loadEvents lanza una excepcion, muestra un
-				//dialogo con un mensaje de error.
-			}
-		});
-		load.setIcon(new ImageIcon("icons/open.png"));
-		toolBar.add(load);
-		
-		JButton changeContClass = new JButton();
-		changeContClass.setActionCommand("changeContClass");
-		changeContClass.setToolTipText("Change CO2 class");
-		changeContClass.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				new ChangeCO2ClassDialog(_ctrl);
-				//_ctrl.addEvent();
-			}
-		});
-		changeContClass.setIcon(new ImageIcon("icons/co2class.png"));
-		toolBar.add(changeContClass);
-		
-		JButton changeWeather = new JButton();
-		changeWeather.setActionCommand("changeWeather");
-		changeWeather.setToolTipText("Change road weather");
-		changeWeather.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				
-			}
-		});
-		changeWeather.setIcon(new ImageIcon("icons/weather.png"));
-		toolBar.add(changeWeather);
-		
-		JButton run = new JButton();
-		run.setActionCommand("run");
-		run.setToolTipText("Run");
-		run.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				
-			}
-		});
-		run.setIcon(new ImageIcon("icon/run.png"));
-		toolBar.add(run);
-		
-		JButton stop = new JButton();
-		stop.setActionCommand("stop");
-		stop.setToolTipText("Stop");
-		stop.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				
-			}
-		});
-		stop.setIcon(new ImageIcon("icon/stop.png"));
-		toolBar.add(stop);
-		
-		JButton exit = new JButton();
-		exit.setActionCommand("exit");
-		exit.setToolTipText("Exit");
-		exit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				System.exit(0);
-			}
-		});
-		exit.setIcon(new ImageIcon("icon/exit.png"));
-		toolBar.add(exit);
-		
-		return toolBar;
-	}
-	
 	@Override
 	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {
 		// TODO Auto-generated method stub
@@ -193,18 +226,52 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 		// TODO Auto-generated method stub
 
 	}
-
+	
 	@Override
 	public void onError(String err) {
 		// TODO Auto-generated method stub
-
+		
 	}
-
 	
-	private void run_sim(int n) {
+	public void changeCO2Class() {
+		ChangeCO2ClassDialog dialog = new ChangeCO2ClassDialog(_parent);
+		int status = dialog.open(_map);
+		
+		if(status == 1) {
+			List<Pair<String, Integer>> cs = new ArrayList<>();
+			cs.add(new Pair<String, Integer>(dialog.getVehicle().getId(), dialog.getCO2Class()));
+			try {
+				_ctrl.addEvent(new SetContClassEvent(_time + dialog.getTicks(), cs));
+			}catch(Exception e) {
+				onError("Something went wrong: " + e.getLocalizedMessage());
+			}
+		}
+	}
+	
+	public void changeWeather(){
+		ChangeWeatherDialog dialog = new ChangeWeatherDialog((Frame) SwingUtilities.getWindowAncestor(this));
+		int status = dialog.open(_map);
+		
+		if(status == 1) {
+			List<Pair<String, Weather>> ws = new ArrayList<>();
+			ws.add(new Pair<String, Weather>(dialog.getRoad().getId(), dialog.getWeather()));
+			try {
+				_ctrl.addEvent(new SetWeatherEvent(_time + dialog.getTicks(), ws));
+			}catch(Exception e) {
+				onError("Something went wrong: " + e.getLocalizedMessage());
+			}
+		}
+	}
+	
+	private void run() {
+		final int n = Integer.parseInt(_ticksSpinner.getValue().toString());
+		run_sim(n);
+	}
+	
+	private void run_sim(final int n) {
 		if(n > 0 && !_stopped) {
 			try {
-				_ctrl.run(1);
+				_ctrl.run(1, null);
 			}catch(Exception e) {
 				//TODO show error message
 				_stopped = true;
@@ -224,5 +291,17 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 	
 	private void stop() {
 		_stopped = true;
+	}
+	
+	private void enableToolBar(boolean enable) {
+		_toolBar.setEnabled(enable);
+	}
+	
+	private void exit() {
+		int seleccion = JOptionPane.showConfirmDialog(this.getParent(), "Do you want to exit?", "EXIT", JOptionPane.OK_CANCEL_OPTION);
+		if(seleccion == 0) {
+			System.exit(0); 
+		}
+		
 	}
 }
