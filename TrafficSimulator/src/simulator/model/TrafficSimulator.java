@@ -12,7 +12,6 @@ public class TrafficSimulator implements Observable<TrafficSimObserver>{
 	protected RoadMap _map;
 	protected List<Event> _eventList;
 	protected int _simulatedTime;
-	protected TrafficSimObserver _o;
 	protected List<TrafficSimObserver> _observers;
 	
 	public TrafficSimulator() {
@@ -24,14 +23,18 @@ public class TrafficSimulator implements Observable<TrafficSimObserver>{
 	
 	public void addEvent(Event e) {
 		_eventList.add(e);
-		_o.onEventAdded(_map, _eventList, e, _simulatedTime);
+		for(TrafficSimObserver ob : _observers) {
+			ob.onEventAdded(_map, _eventList, e, _simulatedTime);
+		}
 	}
 	
 	public void advance() throws Exception {
 		
 		_simulatedTime++; //paso 1
 		
-		_o.onAdvanceStart(_map, _eventList, _simulatedTime);
+		for(TrafficSimObserver ob : _observers) {
+			ob.onAdvanceStart(_map, _eventList, _simulatedTime);
+		}
 		
 		while (!(_eventList.isEmpty()) && _eventList.get(0).getTime() == _simulatedTime) {//j < _eventList.size()
 			_eventList.get(0).execute(_map);
@@ -47,14 +50,18 @@ public class TrafficSimulator implements Observable<TrafficSimObserver>{
 			_map.getRoads().get(i).advance(_simulatedTime);
 		}//paso 4
 		
-		_o.onAdvanceEnd(_map, _eventList, _simulatedTime);
+		for(TrafficSimObserver ob : _observers) {
+			ob.onAdvanceEnd(_map, _eventList, _simulatedTime);
+		}
 	}
 	
 	public void reset() {
 		_map.reset();
 		_eventList.clear();
 		_simulatedTime = 0;
-		_o.onReset(_map, _eventList, _simulatedTime);
+		for(TrafficSimObserver ob : _observers) {
+			ob.onReset(_map, _eventList, _simulatedTime);
+		}
 	}
 	
 	public JSONObject report() {
@@ -71,11 +78,38 @@ public class TrafficSimulator implements Observable<TrafficSimObserver>{
 	@Override
 	public void addObserver(TrafficSimObserver o) {
 		_observers.add(o);
-		_o.onRegister(_map, _eventList, _simulatedTime);
+		for(TrafficSimObserver ob : _observers) {
+			ob.onRegister(_map, _eventList, _simulatedTime);
+		}
+	
 	}
-
 	@Override
 	public void removeObserver(TrafficSimObserver o) {
 		_observers.remove(o);
+	}
+	
+	//TRAFFICSIMOBSERVER 
+	private void onAdvanceStart(RoadMap map, List<Event> events, int time) {
+		
+	}
+	private void onAdvanceEnd(RoadMap map, List<Event> events, int time) {
+		
+	}
+	private void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {
+		
+	}
+	private void onReset(RoadMap map, List<Event> events, int time) {
+		
+	}
+	private void onRegister(RoadMap map, List<Event> events, int time) {
+		
+	}
+	private void onError(String err) {
+		
+	}
+	
+	//GETTERS && SETTERS
+	public int getSimulatedTime() {
+		return _simulatedTime;
 	}
 }
