@@ -27,8 +27,7 @@ public class MainWindow extends JFrame {
 	public MainWindow(Controller ctrl) {
 		super("Traffic Simulator");
 		_ctrl = ctrl;
-		initGUI();
-		//_ctrl.addObserver(this);
+		this.initGUI();
 	}
 	
 	private void initGUI() {
@@ -46,12 +45,12 @@ public class MainWindow extends JFrame {
 		viewsPanel.add(tablesPanel);
 		
 		JPanel mapsPanel = new JPanel();
-		mapsPanel.setLayout(new BoxLayout(tablesPanel, BoxLayout.Y_AXIS));
+		mapsPanel.setLayout(new BoxLayout(mapsPanel, BoxLayout.Y_AXIS));
 		viewsPanel.add(mapsPanel);
 		
 		//tables
 		JPanel eventsView = 
-				createViewPanel(new JTable(new EventsTableModel(/*_ctrl*/)), "Events");
+				createViewPanel(new JTable(new EventsTableModel()), "Events");
 		eventsView.setPreferredSize(new Dimension(500, 200));
 		tablesPanel.add(eventsView);
 		
