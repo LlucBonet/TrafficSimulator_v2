@@ -18,10 +18,11 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 
+import simulator.model.Weather;
+import simulator.model.Road;
 import simulator.model.RoadMap;
-import simulator.model.Vehicle;
 
-public class ChangeCO2ClassDialog extends JDialog {
+public class ChangeWeatherDialog extends JDialog {
 
 	/**
 	 * 
@@ -30,24 +31,27 @@ public class ChangeCO2ClassDialog extends JDialog {
 	
 	private int _status;
 	
-	private JComboBox<Vehicle> _vehicles;
-	private JComboBox<Integer> _CO2Class;
+	private JComboBox<Road> _roads;
+	private JComboBox<Weather> _weather;
 	private JSpinner _ticksSpinner;
 	
-	public ChangeCO2ClassDialog(Frame frame) {
-		super(frame, true);
-		initGUI();
-	}
+	private Weather[] w = Weather.values();
 	
-	public ChangeCO2ClassDialog() {
+	public ChangeWeatherDialog() {
 		super();
 		initGUI();
 	}
+	
+	public ChangeWeatherDialog(Frame frame) {
+		super(frame, true);
+		initGUI();
+	}
+		
 
 	public void initGUI(){
 		_status = 0;
 		
-		this.setTitle("Change CO2 Class");
+		this.setTitle("Change Road Weather");
 		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
@@ -55,7 +59,7 @@ public class ChangeCO2ClassDialog extends JDialog {
 		
 	    JTextArea help = new JTextArea();
 		help.setEditable(false);
-		help.setText("Schedule an event to change the CO2 class of a vehicle after a given"
+		help.setText("Schedule an event to change the weather of a road after a given"
 				+ " number o simulation ticks from now.");
 		help.setBackground(mainPanel.getBackground());
 		help.setWrapStyleWord(true);
@@ -68,26 +72,26 @@ public class ChangeCO2ClassDialog extends JDialog {
 		JPanel settingsPanel = new JPanel();
 		settingsPanel.setLayout(new BoxLayout(settingsPanel, BoxLayout.X_AXIS));
 		  
-		  JLabel vehicle = new JLabel("Vehicle: ");
+		  JLabel vehicle = new JLabel("Road: ");
 		  settingsPanel.add(vehicle);
 		  
-		  _vehicles = new JComboBox<>();
-		  settingsPanel.add(_vehicles);
+		  _roads = new JComboBox<>();
+		  settingsPanel.add(_roads);
 		  
 		  settingsPanel.add(Box.createHorizontalGlue());
 		  
-		  JLabel CO2Class = new JLabel("CO2 Class: ");
+		  JLabel CO2Class = new JLabel("Weather: ");
 		  settingsPanel.add(CO2Class);
 		  
-		  _CO2Class = new JComboBox<>();
-		  for(int i = 0; i < 10; i++) {
-			  _CO2Class.addItem(i + 1);
+		  _weather = new JComboBox<>();
+		  for(int i = 0; i < w.length; i++) {
+			  _weather.addItem(w[i]);
 		  }
-		  settingsPanel.add(_CO2Class);
+		  settingsPanel.add(_weather);
 		  
 		  settingsPanel.add(Box.createHorizontalGlue());
 		  
-		  JLabel ticks = new JLabel("Ticks: ");
+		  JLabel ticks = new JLabel("Ticks:");
 		  settingsPanel.add(ticks);
 
 		  _ticksSpinner = new JSpinner();
@@ -99,6 +103,7 @@ public class ChangeCO2ClassDialog extends JDialog {
 		
 		
 		JPanel buttonsPanel = new JPanel();
+	
 		
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(new ActionListener() {
@@ -106,19 +111,20 @@ public class ChangeCO2ClassDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				_status = 0;
-				ChangeCO2ClassDialog.this.setVisible(false);
+				ChangeWeatherDialog.this.setVisible(false);
 			}
 		});
 		buttonsPanel.add(cancelButton);
 		
+
 		JButton okButton = new JButton("OK");
 		okButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (_vehicles.getSelectedItem() != null) {
+				if (_roads.getSelectedItem() != null) {
 					_status = 1;
-					ChangeCO2ClassDialog.this.setVisible(false);
+					ChangeWeatherDialog.this.setVisible(false);
 				}
 			}
 		});
@@ -132,24 +138,24 @@ public class ChangeCO2ClassDialog extends JDialog {
 		setResizable(false);
 		setVisible(true);
 	}
-	
+		
 	protected int open(RoadMap map) {
-		_vehicles.removeAllItems();
-		for(Vehicle v : map.getVehicles()) {
-			_vehicles.addItem(v);
+		_roads.removeAllItems();
+		for(Road r : map.getRoads()) {
+			_roads.addItem(r);
 		}	
 		setLocation(getParent().getWidth() / 2, getParent().getHeight() / 2);
 		setVisible(true);
 		return _status;
 	}
 	
-	protected Vehicle getVehicle() {
-		return (Vehicle) _vehicles.getSelectedItem();
+	protected Road getRoad() {
+		return (Road) _roads.getSelectedItem();
 		
 	}
 	
-	protected int getCO2Class() {
-		return (int) _CO2Class.getSelectedItem();
+	protected Weather getWeather() {
+		return (Weather) _weather.getSelectedItem();
 	}
 	
 	protected int getTicks() {
