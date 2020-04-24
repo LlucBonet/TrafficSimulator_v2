@@ -1,8 +1,9 @@
 package simulator.view;
 
-import java.awt.LayoutManager;
+import java.awt.BorderLayout;
 import java.util.List;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import simulator.control.Controller;
@@ -12,23 +13,22 @@ import simulator.model.TrafficSimObserver;
 
 public class StatusBar extends JPanel implements TrafficSimObserver {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	Controller _ctrl;
+
 	public StatusBar(Controller ctrl) {
-		// TODO Auto-generated constructor stub
+		_ctrl = ctrl;
+		initGUI();
 	}
 
-	public StatusBar(LayoutManager layout) {
-		super(layout);
-		// TODO Auto-generated constructor stub
-	}
-
-	public StatusBar(boolean isDoubleBuffered) {
-		super(isDoubleBuffered);
-		// TODO Auto-generated constructor stub
-	}
-
-	public StatusBar(LayoutManager layout, boolean isDoubleBuffered) {
-		super(layout, isDoubleBuffered);
-		// TODO Auto-generated constructor stub
+	private void initGUI() {
+		setLayout(new BorderLayout());
+		JLabel time = new JLabel("Time: " + _ctrl.getSimulatedTime());
+		this.add(time, BorderLayout.PAGE_START);
+		
 	}
 
 	@Override
