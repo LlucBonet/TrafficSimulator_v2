@@ -28,7 +28,7 @@ public class SetWeatherEvent extends Event {
 	
 	@Override
 	public String toString() {
-		return "New Set Weather '" + _ws + "'";
+		return "Change Weather '" + _ws + "'";
 	}
 
 }

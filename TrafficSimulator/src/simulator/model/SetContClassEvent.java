@@ -29,6 +29,6 @@ public class SetContClassEvent extends Event {
 
 	@Override
 	public String toString() {
-		return "New Set Contamination Classification '" + _cs + "'";
+		return "Change CO2 Class '" + _cs + "'";
 	}
 }
