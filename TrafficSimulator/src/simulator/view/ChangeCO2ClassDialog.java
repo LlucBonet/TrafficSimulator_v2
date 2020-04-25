@@ -1,6 +1,7 @@
 package simulator.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -72,6 +73,7 @@ public class ChangeCO2ClassDialog extends JDialog {
 		  settingsPanel.add(vehicle);
 		  
 		  _vehicles = new JComboBox<>();
+		  _vehicles.setBackground(Color.WHITE);
 		  settingsPanel.add(_vehicles);
 		  
 		  settingsPanel.add(Box.createHorizontalGlue());
@@ -80,6 +82,7 @@ public class ChangeCO2ClassDialog extends JDialog {
 		  settingsPanel.add(CO2Class);
 		  
 		  _CO2Class = new JComboBox<>();
+		  _CO2Class.setBackground(Color.WHITE);
 		  for(int i = 0; i < 10; i++) {
 			  _CO2Class.addItem(i + 1);
 		  }

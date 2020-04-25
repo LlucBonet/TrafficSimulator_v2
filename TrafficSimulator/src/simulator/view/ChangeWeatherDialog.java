@@ -1,6 +1,7 @@
 package simulator.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -76,6 +77,7 @@ public class ChangeWeatherDialog extends JDialog {
 		  settingsPanel.add(vehicle);
 		  
 		  _roads = new JComboBox<>();
+		  _roads.setBackground(Color.WHITE);
 		  settingsPanel.add(_roads);
 		  
 		  settingsPanel.add(Box.createHorizontalGlue());
@@ -84,6 +86,7 @@ public class ChangeWeatherDialog extends JDialog {
 		  settingsPanel.add(CO2Class);
 		  
 		  _weather = new JComboBox<>();
+		  _weather.setBackground(Color.WHITE);
 		  for(int i = 0; i < w.length; i++) {
 			  _weather.addItem(w[i]);
 		  }
