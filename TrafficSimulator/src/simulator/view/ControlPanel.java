@@ -1,15 +1,18 @@
 package simulator.view;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -78,7 +81,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 		
 		//load
 		_fc = new JFileChooser();
-		_fc.setCurrentDirectory(new File("maria/git/TrafficSimulator_v2-Lluc/TrafficSimulator/resources/examples"));
+		_fc.setCurrentDirectory(new File("resources/examples"));
 		_loadButton = new JButton();
 		_loadButton.setToolTipText("Load a file");
 		_loadButton.setIcon(new ImageIcon("resources/icons/open.png"));
@@ -119,6 +122,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 		_toolBar.add(_changeWeatherButton);
 		
 		_toolBar.addSeparator();
+	    
 		
 		//run 
 		_runButton = new JButton();
@@ -147,13 +151,13 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 		
 		//ticks
 		JLabel ticks = new JLabel("Ticks: ");
+		ticks.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 		_toolBar.add(ticks);
 		_ticksSpinner = new JSpinner();
 		_ticksSpinner.setValue(10);
-		_ticksSpinner.setPreferredSize(new Dimension(100, _ticksSpinner.getHeight()));
-		_ticksSpinner.setMaximumSize(new Dimension(100, _ticksSpinner.getHeight()));
 		_toolBar.add(_ticksSpinner);
-
+		
+		_toolBar.add(Box.createHorizontalGlue());
 		_toolBar.addSeparator();
 		
 		//exit
@@ -171,32 +175,32 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 	}
 	
 	private void loadFile() {
-		int selection = _fc.showOpenDialog(_parent);
 		
-	}
-	
-	private InputStream selectOpenFile() {
-		InputStream in = null;
-		final int selection;
+		final int selection = _fc.showOpenDialog(_parent);
 		
-		final JFileChooser fc = new JFileChooser();
-		
-		selection = fc.showOpenDialog(null);
-		fc.addActionListener(new ActionListener() {
+		_fc.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent arg0) { 
 				if (selection == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
+					File file = _fc.getSelectedFile();
 					System.out.println("loading " + file.getName());
+					
+					try {
+						InputStream in = new FileInputStream(file);
+						_ctrl.loadEvents(in);
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
 				}
 				else {
 					System.out.println("load cancelled by user");
 				}
 			}
 		});
-		
-		return in;
 	}
+
 	@Override
 	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {
 		// TODO Auto-generated method stub
