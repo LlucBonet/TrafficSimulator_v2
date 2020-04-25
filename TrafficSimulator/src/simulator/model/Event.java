@@ -7,14 +7,14 @@ public abstract class Event implements Comparable<Event> {
 	Event(int time) {
 		if (time < 1)
 			throw new IllegalArgumentException("Time must be positive (" + time + ")");
-		else
+		else 
 			_time = time;
 	}
 
-	int getTime() {
+	public int getTime() {
 		return _time;
 	}
-
+	
 	@Override
 	public int compareTo(Event o) { 
 		//orden basado en _time. De menor a mayor 
