@@ -96,7 +96,7 @@ public abstract class Road extends SimulatedObject {
 		else throw new NullPointerException("weather == null  for road " + _id);
 	}
 	
-	Weather getWeatherCond() {
+	public Weather getWeatherCond() {
 		return this._weather;
 	}
 	
@@ -112,7 +112,11 @@ public abstract class Road extends SimulatedObject {
 		return Collections.unmodifiableList(new ArrayList<>(_vehicles));
 	}
 	
-	int getSpeedLimit() {
+	public int getMaxSpeed() {
+		return _maxSpeed;
+	}
+	
+	public int getSpeedLimit() {
 		return this._speedLimit;
 	}
 	

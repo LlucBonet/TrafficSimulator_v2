@@ -148,7 +148,11 @@ public class Vehicle extends SimulatedObject implements Comparable<Vehicle> {
 		else this._actualSpeed = this._maxSpeed;
 	}
 	
-	int getActualSpeed() {
+	public int getMaxSpeed() {
+		return  _maxSpeed;
+	}
+	
+	public int getActualSpeed() {
 		return this._actualSpeed;
 	}
 	
@@ -157,6 +161,14 @@ public class Vehicle extends SimulatedObject implements Comparable<Vehicle> {
 			this._contClass = c;
 		}
 		else throw new IllegalArgumentException("Illegal ContClass for vehicle" + this._id);	
+	}
+	
+	public int getTotalCont() {
+		return _totalCont;
+	}
+	
+	public int getTotalDistance() {
+		return this._totalDistance;
 	}
 	
 	public int getContClass(){
@@ -175,7 +187,7 @@ public class Vehicle extends SimulatedObject implements Comparable<Vehicle> {
 		return this._vStatus;
 	}
 	
-	List<Junction> getItinerary(){
+	public List<Junction> getItinerary(){
 		return this._itinerary;
 	}
 }

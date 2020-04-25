@@ -156,6 +156,10 @@ public class Junction extends SimulatedObject {
 	public int getGreenLightIndex() {
 		return _greenLightIndex;
 	}
+	
+	public Map<Road, List<Vehicle>> getQueueByRoad(){
+		return this._queueByRoad;
+	}
 	public List<Road> getInRoads() {
 		return Collections.unmodifiableList(new ArrayList<>(_inRoad));
 		
