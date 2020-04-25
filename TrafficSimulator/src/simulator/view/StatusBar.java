@@ -1,10 +1,13 @@
 package simulator.view;
 
-import java.awt.BorderLayout;
+import java.awt.Font;
 import java.util.List;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import simulator.control.Controller;
 import simulator.model.Event;
@@ -18,6 +21,7 @@ public class StatusBar extends JPanel implements TrafficSimObserver {
 	 */
 	private static final long serialVersionUID = 1L;
 	Controller _ctrl;
+	JTextArea info = new JTextArea("Info: ");
 
 	public StatusBar(Controller ctrl) {
 		_ctrl = ctrl;
@@ -25,10 +29,21 @@ public class StatusBar extends JPanel implements TrafficSimObserver {
 	}
 
 	private void initGUI() {
-		setLayout(new BorderLayout());
+		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		JLabel time = new JLabel("Time: " + _ctrl.getSimulatedTime());
-		this.add(time, BorderLayout.PAGE_START);
+		time.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 35));
+		time.setFont(new Font("time.font", Font.PLAIN, 14));
 		
+		this.add(time);
+		this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		
+		info.setBackground(this.getBackground());
+		info.setEditable(false);
+		info.setWrapStyleWord(true);
+		info.setLineWrap(true);
+		info.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+		info.setFont(new Font("info.font", Font.PLAIN, 14));
+		this.add(info);
 	}
 
 	@Override
@@ -67,4 +82,7 @@ public class StatusBar extends JPanel implements TrafficSimObserver {
 
 	}
 
+	public void setInfo(String infoGame) {
+		info.setText("Info: " + infoGame);
+	}
 }
