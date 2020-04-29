@@ -1,5 +1,6 @@
 package simulator.view;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class StatusBar extends JPanel implements TrafficSimObserver {
 
 	public StatusBar(Controller ctrl) {
 		_ctrl = ctrl;
+		_ctrl.addObserver(this);
 		initGUI();
 	}
 
@@ -47,39 +49,28 @@ public class StatusBar extends JPanel implements TrafficSimObserver {
 	}
 
 	@Override
-	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-
-	}
+	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {}
 
 	@Override
-	public void onAdvanceEnd(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-
-	}
-
+	public void onAdvanceEnd(RoadMap map, List<Event> events, int time) {}
+	
 	@Override
 	public void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {
-		// TODO Auto-generated method stub
-
+		info.setText(e.toString());
 	}
 
 	@Override
 	public void onReset(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-
+		info.setText("Info: Nuevo fichero cargado");
 	}
 
 	@Override
-	public void onRegister(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-
-	}
+	public void onRegister(RoadMap map, List<Event> events, int time) {}
 
 	@Override
 	public void onError(String err) {
-		// TODO Auto-generated method stub
-
+		info.setText(err);
+		info.setForeground(Color.RED);
 	}
 
 	public void setInfo(String infoGame) {

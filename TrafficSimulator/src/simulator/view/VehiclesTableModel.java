@@ -1,12 +1,12 @@
 package simulator.view;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
 import simulator.control.Controller;
 import simulator.model.Event;
-import simulator.model.Road;
 import simulator.model.RoadMap;
 import simulator.model.TrafficSimObserver;
 import simulator.model.Vehicle;
@@ -24,14 +24,20 @@ public class VehiclesTableModel extends AbstractTableModel implements TrafficSim
 	
 	public VehiclesTableModel(Controller ctrl) {
 		_ctrl = ctrl;
+		_ctrl.addObserver(this);
 		_vehicles = null;
 	}
 
+	@Override
+	public boolean isCellEditable(int row, int column) {
+		return false;
+	}
+	
 	public void update() {
 		fireTableDataChanged();
 	}
 	
-	public void setRoadList(List<Vehicle> v) {
+	public void setVehicleList(List<Vehicle> v) {
 		_vehicles = v;
 		update();
 	}
@@ -97,26 +103,20 @@ public class VehiclesTableModel extends AbstractTableModel implements TrafficSim
 
 	@Override
 	public void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {
-		// TODO Auto-generated method stub
-
+		setVehicleList(map.getVehicles());
 	}
 
 	@Override
 	public void onReset(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-
+		setVehicleList(map.getVehicles());
 	}
 
 	@Override
 	public void onRegister(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-
+		_vehicles = new ArrayList<>();
 	}
 
 	@Override
-	public void onError(String err) {
-		// TODO Auto-generated method stub
-
-	}
+	public void onError(String err) {}
 
 }

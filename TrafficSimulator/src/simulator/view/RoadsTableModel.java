@@ -1,5 +1,6 @@
 package simulator.view;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -23,9 +24,15 @@ public class RoadsTableModel extends AbstractTableModel implements TrafficSimObs
 	
 	public RoadsTableModel(Controller ctrl) {
 		_ctrl = ctrl;
+		_ctrl.addObserver(this);
 		_roads = null;
 	}
 
+	@Override
+	public boolean isCellEditable(int row, int column) {
+		return false;
+	}
+	
 	public void update() {
 		fireTableDataChanged();
 	}
@@ -85,26 +92,21 @@ public class RoadsTableModel extends AbstractTableModel implements TrafficSimObs
 
 	@Override
 	public void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {
-		// TODO Auto-generated method stub
-
+		setRoadList(map.getRoads());
 	}
 
 	@Override
 	public void onReset(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-
+		setRoadList(map.getRoads());
 	}
 
 	@Override
 	public void onRegister(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
+		_roads = new ArrayList<>();
 
 	}
 
 	@Override
-	public void onError(String err) {
-		// TODO Auto-generated method stub
-
-	}
+	public void onError(String err) {}
 
 }

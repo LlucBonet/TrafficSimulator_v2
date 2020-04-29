@@ -184,15 +184,13 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 				if (selection == JFileChooser.APPROVE_OPTION) {
 					File file = _fc.getSelectedFile();
 					System.out.println("loading " + file.getName());
-					
 					try {
+						_ctrl.reset();
 						InputStream in = new FileInputStream(file);
 						_ctrl.loadEvents(in);
 					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						onError(e.getLocalizedMessage());
 					}
-					
 				}
 				else {
 					System.out.println("load cancelled by user");
@@ -214,32 +212,25 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 	}
 
 	@Override
-	public void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {
-		// TODO Auto-generated method stub
-
-	}
+	public void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {}
 
 	@Override
 	public void onReset(RoadMap map, List<Event> events, int time) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public void onRegister(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-
-	}
+	public void onRegister(RoadMap map, List<Event> events, int time) {}
 	
 	@Override
 	public void onError(String err) {
-		// TODO Auto-generated method stub
-		
+		JOptionPane.showMessageDialog(this.getParent(), err);
 	}
 	
 	public void changeCO2Class() {
-		ChangeCO2ClassDialog dialog = new ChangeCO2ClassDialog(_parent);
+		ChangeCO2ClassDialog dialog = new ChangeCO2ClassDialog((Frame) SwingUtilities.getWindowAncestor(this));
 		int status = dialog.open(_map);
+		System.out.println(status);
 		
 		if(status == 1) {
 			List<Pair<String, Integer>> cs = new ArrayList<>();
