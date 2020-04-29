@@ -81,31 +81,10 @@ public class TrafficSimulator implements Observable<TrafficSimObserver>{
 		for(TrafficSimObserver ob : _observers) {
 			ob.onRegister(_map, _eventList, _simulatedTime);
 		}
-	
 	}
 	@Override
 	public void removeObserver(TrafficSimObserver o) {
 		_observers.remove(o);
-	}
-	
-	//TRAFFICSIMOBSERVER 
-	private void onAdvanceStart(RoadMap map, List<Event> events, int time) {
-		
-	}
-	private void onAdvanceEnd(RoadMap map, List<Event> events, int time) {
-		
-	}
-	private void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {
-		
-	}
-	private void onReset(RoadMap map, List<Event> events, int time) {
-		
-	}
-	private void onRegister(RoadMap map, List<Event> events, int time) {
-		
-	}
-	private void onError(String err) {
-		
 	}
 	
 	//GETTERS && SETTERS
