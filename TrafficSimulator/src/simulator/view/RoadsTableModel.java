@@ -79,21 +79,15 @@ public class RoadsTableModel extends AbstractTableModel implements TrafficSimObs
 	}
 
 	@Override
-	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-
-	}
+	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {}
 
 	@Override
 	public void onAdvanceEnd(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-
+		setRoadList(map.getRoads());
 	}
 
 	@Override
-	public void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {
-		setRoadList(map.getRoads());
-	}
+	public void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {}
 
 	@Override
 	public void onReset(RoadMap map, List<Event> events, int time) {

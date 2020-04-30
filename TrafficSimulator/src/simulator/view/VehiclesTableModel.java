@@ -10,6 +10,7 @@ import simulator.model.Event;
 import simulator.model.RoadMap;
 import simulator.model.TrafficSimObserver;
 import simulator.model.Vehicle;
+import simulator.model.VehicleStatus;
 
 public class VehiclesTableModel extends AbstractTableModel implements TrafficSimObserver {
 
@@ -65,10 +66,26 @@ public class VehiclesTableModel extends AbstractTableModel implements TrafficSim
 			o = _vehicles.get(rowIndex).getId();
 			break;
 		case 1:
-			o = _vehicles.get(rowIndex).getLocation();
+			o = "";
+			VehicleStatus vs = _vehicles.get(rowIndex).getStatus();
+			switch(vs) {
+			case PENDING:
+				o = "Pending";
+				break;
+			case TRAVELING:
+				o += _vehicles.get(rowIndex).getRoad().toString() 
+				  + ":" + _vehicles.get(rowIndex).getLocation();
+				break;
+			case WAITING:
+				o = "Waiting:" + _vehicles.get(rowIndex).getRoad().getDest();
+				break;
+			case ARRIVED:
+				o = "Arrived";
+				break;
+			}
 			break;
 		case 2:
-			o = _vehicles.get(rowIndex).getItinerary();
+			o = _vehicles.get(rowIndex).getItinerary().toString();
 			break;
 		case 3:
 			o = _vehicles.get(rowIndex).getContClass();
@@ -90,21 +107,15 @@ public class VehiclesTableModel extends AbstractTableModel implements TrafficSim
 	}
 
 	@Override
-	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-
-	}
+	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {}
 
 	@Override
 	public void onAdvanceEnd(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-
+		setVehicleList(map.getVehicles());
 	}
 
 	@Override
-	public void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {
-		setVehicleList(map.getVehicles());
-	}
+	public void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {}
 
 	@Override
 	public void onReset(RoadMap map, List<Event> events, int time) {
