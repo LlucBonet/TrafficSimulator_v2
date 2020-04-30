@@ -23,6 +23,7 @@ public class StatusBar extends JPanel implements TrafficSimObserver {
 	private static final long serialVersionUID = 1L;
 	Controller _ctrl;
 	JTextArea info = new JTextArea("Info: ");
+	JLabel _time;
 
 	public StatusBar(Controller ctrl) {
 		_ctrl = ctrl;
@@ -32,11 +33,11 @@ public class StatusBar extends JPanel implements TrafficSimObserver {
 
 	private void initGUI() {
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-		JLabel time = new JLabel("Time: " + _ctrl.getSimulatedTime());
-		time.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 35));
-		time.setFont(new Font("time.font", Font.PLAIN, 14));
+		_time = new JLabel("Time: " + 0);
+		_time.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 35));
+		_time.setFont(new Font("time.font", Font.PLAIN, 14));
 		
-		this.add(time);
+		this.add(_time);
 		this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		
 		info.setBackground(this.getBackground());
@@ -47,9 +48,16 @@ public class StatusBar extends JPanel implements TrafficSimObserver {
 		info.setFont(new Font("info.font", Font.PLAIN, 14));
 		this.add(info);
 	}
+	
+	public void setInfo(String infoGame) {
+		info.setText("Info: " + infoGame);
+	}
 
+	//IMPLEMENTS TRAFFICSIMOBSERVER
 	@Override
-	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {}
+	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {
+		_time.setText("Time: " + time);
+	}
 
 	@Override
 	public void onAdvanceEnd(RoadMap map, List<Event> events, int time) {}
@@ -73,7 +81,5 @@ public class StatusBar extends JPanel implements TrafficSimObserver {
 		info.setForeground(Color.RED);
 	}
 
-	public void setInfo(String infoGame) {
-		info.setText("Info: " + infoGame);
-	}
+	
 }
