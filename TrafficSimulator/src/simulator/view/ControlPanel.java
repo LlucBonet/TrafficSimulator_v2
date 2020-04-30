@@ -41,7 +41,6 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 	
 	private Controller _ctrl;
 	private RoadMap _map;
-	private int  _time;
 	
 	private JToolBar _toolBar;
 	private JButton _loadButton;
@@ -60,19 +59,17 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 	
 	ControlPanel(Controller ctrl) {
 		_ctrl = ctrl;
-		_stopped = true;
-		_time = 0;
-		initGUI();
 		_ctrl.addObserver(this);
+		_stopped = true;
+		initGUI();
 	}
 
 	ControlPanel(Controller ctrl, MainWindow parent){
 		_ctrl = ctrl;
+		_ctrl.addObserver(this);
 		_stopped = true;
-		_time = 0;
 		initGUI();
 		_parent = parent;
-		_ctrl.addObserver(this);
 	}
 	
 	private void initGUI() {
@@ -200,24 +197,18 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 	}
 
 	@Override
-	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
+	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {}
 
+	@Override
+	public void onAdvanceEnd(RoadMap map, List<Event> events, int time) {}
+
+	@Override
+	public void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {
+		_map = map;
 	}
 
 	@Override
-	public void onAdvanceEnd(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {}
-
-	@Override
-	public void onReset(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-	}
+	public void onReset(RoadMap map, List<Event> events, int time) {}
 
 	@Override
 	public void onRegister(RoadMap map, List<Event> events, int time) {}
@@ -236,7 +227,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 			List<Pair<String, Integer>> cs = new ArrayList<>();
 			cs.add(new Pair<String, Integer>(dialog.getVehicle().getId(), dialog.getCO2Class()));
 			try {
-				_ctrl.addEvent(new SetContClassEvent(_time + dialog.getTicks(), cs));
+				_ctrl.addEvent(new SetContClassEvent(_ctrl.getSimulatedTime() + dialog.getTicks(), cs));
 			}catch(Exception e) {
 				onError("Something went wrong: " + e.getLocalizedMessage());
 			}
@@ -251,7 +242,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 			List<Pair<String, Weather>> ws = new ArrayList<>();
 			ws.add(new Pair<String, Weather>(dialog.getRoad().getId(), dialog.getWeather()));
 			try {
-				_ctrl.addEvent(new SetWeatherEvent(_time + dialog.getTicks(), ws));
+				_ctrl.addEvent(new SetWeatherEvent(_ctrl.getSimulatedTime() + dialog.getTicks(), ws));
 			}catch(Exception e) {
 				onError("Something went wrong: " + e.getLocalizedMessage());
 			}
@@ -260,6 +251,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 	
 	private void run() {
 		final int n = Integer.parseInt(_ticksSpinner.getValue().toString());
+		_stopped = false;
 		run_sim(n);
 	}
 	
@@ -268,7 +260,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 			try {
 				_ctrl.run(1, null);
 			}catch(Exception e) {
-				//TODO show error message
+				this.onError(e.getLocalizedMessage());
 				_stopped = true;
 				return;
 			}
