@@ -30,7 +30,8 @@ public class SetWeatherEvent extends Event {
 	public String toString() {
 		String text = "Change Weather [";
 		for(int i = 0; i < _ws.size(); i++) {
-			text += "(" + _ws.get(i).getFirst() + ", " + _ws.get(i).getSecond() + "), ";
+			text += "(" + _ws.get(i).getFirst() + ", " + _ws.get(i).getSecond() + ")";
+			if(i < _ws.size()-1) text += ", ";
 		}
 		text += "]";
 		return text;

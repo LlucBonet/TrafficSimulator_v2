@@ -31,8 +31,10 @@ public class SetContClassEvent extends Event {
 	public String toString() {
 		String text = "Change CO2 Class [";
 		for(int i = 0; i < _cs.size(); i++) {
-			text += "(" + _cs.get(i).getFirst() + ", " + _cs.get(i).getSecond() + "), ";
+			text += "(" + _cs.get(i).getFirst() + ", " + _cs.get(i).getSecond() + ")";
+			if(i < _cs.size()-1) text += ", ";
 		}
+	
 		text += "]";
 		return text;
 	}
