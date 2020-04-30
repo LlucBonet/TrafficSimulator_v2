@@ -170,7 +170,7 @@ public class Main {
 				new MainWindow(ctrl);
 			}
 		});
-		
+        
 	}
 
 	private static void start(String[] args) throws Exception {

@@ -40,11 +40,6 @@ public class ChangeCO2ClassDialog extends JDialog {
 		initGUI();
 	}
 	
-	public ChangeCO2ClassDialog() {
-		super();
-		initGUI();
-	}
-
 	public void initGUI(){
 		_status = 0;
 		
@@ -133,7 +128,7 @@ public class ChangeCO2ClassDialog extends JDialog {
 		setPreferredSize(new Dimension(600, 200));
 		pack();
 		setResizable(false);
-		setVisible(true);
+		setVisible(false);
 	}
 	
 	protected int open(RoadMap map) {

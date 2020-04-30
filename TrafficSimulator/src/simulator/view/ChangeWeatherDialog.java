@@ -36,12 +36,12 @@ public class ChangeWeatherDialog extends JDialog {
 	private JComboBox<Weather> _weather;
 	private JSpinner _ticksSpinner;
 	
-	private Weather[] w = Weather.values();
+	private Weather[] _w = Weather.values();
 	
-	public ChangeWeatherDialog() {
-		super();
-		initGUI();
-	}
+//	public ChangeWeatherDialog() {
+//		super();
+//		initGUI();
+//	}
 	
 	public ChangeWeatherDialog(Frame frame) {
 		super(frame, true);
@@ -87,8 +87,8 @@ public class ChangeWeatherDialog extends JDialog {
 		  
 		  _weather = new JComboBox<>();
 		  _weather.setBackground(Color.WHITE);
-		  for(int i = 0; i < w.length; i++) {
-			  _weather.addItem(w[i]);
+		  for(int i = 0; i < _w.length; i++) {
+			  _weather.addItem(_w[i]);
 		  }
 		  settingsPanel.add(_weather);
 		  
@@ -139,7 +139,7 @@ public class ChangeWeatherDialog extends JDialog {
 		setPreferredSize(new Dimension(600, 200));
 		pack();
 		setResizable(false);
-		setVisible(true);
+		setVisible(false);
 	}
 		
 	protected int open(RoadMap map) {
