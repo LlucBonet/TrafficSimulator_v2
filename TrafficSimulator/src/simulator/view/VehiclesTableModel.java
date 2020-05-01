@@ -1,5 +1,6 @@
 package simulator.view;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class VehiclesTableModel extends AbstractTableModel implements TrafficSim
 		_ctrl.addObserver(this);
 		_vehicles = null;
 	}
+	
 
 	@Override
 	public boolean isCellEditable(int row, int column) {

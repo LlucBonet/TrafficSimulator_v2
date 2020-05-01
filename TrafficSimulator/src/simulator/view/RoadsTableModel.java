@@ -62,18 +62,25 @@ public class RoadsTableModel extends AbstractTableModel implements TrafficSimObs
 		switch(columnIndex) {
 		case 0:
 			o = _roads.get(rowIndex).getId();
+			break;
 		case 1:
 			o = _roads.get(rowIndex).getLength();
+			break;
 		case 2:
-			o = _roads.get(rowIndex).getWeatherCond();
+			o = _roads.get(rowIndex).getWeatherCond().toString();
+			break;
 		case 3:
 			o = _roads.get(rowIndex).getMaxSpeed();
+			break;
 		case 4:
 			o = _roads.get(rowIndex).getSpeedLimit();
+			break;
 		case 5:
 			o = _roads.get(rowIndex).getTotalCont();
+			break;
 		case 6:
 			o = _roads.get(rowIndex).getContLimit();
+			break;
 		}
 		return o;
 	}

@@ -108,7 +108,7 @@ public abstract class Road extends SimulatedObject {
 		this._totalCont = tc;	
 	}
 	
-	List<Vehicle> getVehicleList(){
+	public List<Vehicle> getVehicleList(){
 		return Collections.unmodifiableList(new ArrayList<>(_vehicles));
 	}
 	
