@@ -17,6 +17,7 @@ public class Controller {
 
 	private TrafficSimulator _trafficSimulator;
 	private Factory<Event> _eventFactory;
+	private JSONObject _jo;
 	
 	public Controller(TrafficSimulator sim, Factory<Event> eventFactory) {
 		if(sim == null)
@@ -30,9 +31,10 @@ public class Controller {
 	}
 
 	public void loadEvents(InputStream in) {
-		JSONObject jo = new JSONObject(new JSONTokener(in));
-		JSONArray events = jo.getJSONArray("events");
-		
+		if(in != null) {
+			_jo = new JSONObject(new JSONTokener(in));
+		}
+		JSONArray events = _jo.getJSONArray("events");
 		for(int i = 0; i < events.length(); i++) {
 			_trafficSimulator.addEvent(_eventFactory.createInstance(events.getJSONObject(i)));
 		}

@@ -17,6 +17,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -32,7 +35,7 @@ import simulator.model.SetWeatherEvent;
 import simulator.model.TrafficSimObserver;
 import simulator.model.Weather;
 
-public class ControlPanel extends JPanel implements TrafficSimObserver {
+public class ControlPanel extends JPanel implements TrafficSimObserver, ActionListener {
 
 	/**
 	 * 
@@ -43,12 +46,23 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 	private RoadMap _map;
 	
 	private JToolBar _toolBar;
+	private JMenuBar _menuBar;
+	
+	private final String LOAD = "load";
+	private final String CHANGECO2 = "changeCO2";
+	private final String CHANGEWEATHER = "changeWeather";
+	private final String START = "start";
+	private final String STOP = "stop";
+	private final String RESET = "reset";
+	private final String EXIT = "exit";
+	
 	private JButton _loadButton;
 	private JButton _runButton;
 	private JButton _stopButton;
 	private JButton _exitButton;
 	private JButton _changeCO2ClassButton;
 	private JButton _changeWeatherButton;
+	private JButton _resetButton;
 	private JSpinner _ticksSpinner;
 	
 	private JFileChooser _fc;
@@ -74,6 +88,9 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 	
 	private void initGUI() {
 		setLayout(new BorderLayout());
+		
+		
+		
 		_toolBar = new JToolBar();
 		
 		//load
@@ -146,11 +163,24 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 		});
 		_toolBar.add(_stopButton);
 		
+		//reset
+		_resetButton = new JButton();
+		_resetButton.setToolTipText("Reset");
+		_resetButton.setIcon(new ImageIcon("resources/icons/reset.jpg"));
+		_resetButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				reset();
+			}
+		});
+		_toolBar.add(_resetButton);
+		
 		//ticks
 		JLabel ticks = new JLabel("Ticks: ");
 		ticks.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 		_toolBar.add(ticks);
 		_ticksSpinner = new JSpinner();
+		_ticksSpinner.setToolTipText("1-1000");
 		_ticksSpinner.setValue(10);
 		_toolBar.add(_ticksSpinner);
 		
@@ -168,54 +198,71 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 			}
 		});
 		_toolBar.add(_exitButton, -1);
+		
 		add(_toolBar, BorderLayout.PAGE_START);
+		
+		initMenuBar();
+	}
+	
+	public void initMenuBar() {
+		_menuBar = new JMenuBar();
+		
+		JMenu menu = new JMenu("Menu"); 
+		JMenuItem loadF = new JMenuItem("Load File");
+		loadF.setActionCommand(LOAD);
+		loadF.addActionListener(this);
+		JMenuItem changeCO2 = new JMenuItem("Change CO2 Class");
+		changeCO2.setActionCommand(CHANGECO2);
+		changeCO2.addActionListener(this);
+		JMenuItem changeW = new JMenuItem("Change Weather");
+		changeW.setActionCommand(CHANGEWEATHER);
+		changeW.addActionListener(this);
+		JMenuItem exit = new JMenuItem("Exit");
+		exit.setActionCommand(EXIT);
+		exit.addActionListener(this);
+		
+		menu.add(loadF);
+		menu.add(changeCO2);
+		menu.add(changeW);
+		menu.add(exit);
+		_menuBar.add(menu);
+		
+		JMenu execution = new JMenu("Execution");
+		JMenuItem start = new JMenuItem("Start");
+		start.setActionCommand(START);
+		start.addActionListener(this);
+		JMenuItem stop = new JMenuItem("Stop");
+		stop.setActionCommand(STOP);
+		stop.addActionListener(this);
+		JMenuItem reset = new JMenuItem("Reset");
+		reset.setActionCommand(RESET);
+		reset.addActionListener(this);
+		
+		execution.add(start);
+		execution.add(stop);
+		execution.add(reset);
+		_menuBar.add(execution);
+		
+		this.add(_menuBar);
 	}
 	
 	private void loadFile() {
 		
 		final int selection = _fc.showOpenDialog(_parent);
-		
-		_fc.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) { 
-				if (selection == JFileChooser.APPROVE_OPTION) {
-					File file = _fc.getSelectedFile();
-					System.out.println("loading " + file.getName());
-					try {
-						_ctrl.reset();
-						InputStream in = new FileInputStream(file);
-						_ctrl.loadEvents(in);
-					} catch (FileNotFoundException e) {
-						onError(e.getLocalizedMessage());
-					}
-				}
-				else {
-					System.out.println("load cancelled by user");
-				}
+		if (selection == JFileChooser.APPROVE_OPTION) {
+			File file = _fc.getSelectedFile();
+			System.out.println("loading " + file.getName());
+			try {
+				_ctrl.reset();
+				InputStream in = new FileInputStream(file);
+				_ctrl.loadEvents(in);
+			} catch (FileNotFoundException e) {
+				onError(e.getLocalizedMessage());
 			}
-		});
-	}
-
-	@Override
-	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {}
-
-	@Override
-	public void onAdvanceEnd(RoadMap map, List<Event> events, int time) {}
-
-	@Override
-	public void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {
-		_map = map;
-	}
-
-	@Override
-	public void onReset(RoadMap map, List<Event> events, int time) {}
-
-	@Override
-	public void onRegister(RoadMap map, List<Event> events, int time) {}
-	
-	@Override
-	public void onError(String err) {
-		JOptionPane.showMessageDialog(this.getParent(), err);
+		}
+		else {
+			System.out.println("load cancelled by user");
+		}
 	}
 	
 	public void changeCO2Class() {
@@ -280,6 +327,11 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 		_stopped = true;
 	}
 	
+	private void reset() {
+		_ctrl.reset();
+		_ctrl.loadEvents(null);
+	}
+	
 	private void enableToolBar(boolean enable) {
 		_toolBar.setEnabled(enable);
 	}
@@ -290,5 +342,43 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 			System.exit(0); 
 		}
 		
+	}
+
+	//ACTION LISTENER
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(LOAD.equals(e.getActionCommand())) loadFile();
+		if(CHANGECO2.equals(e.getActionCommand())) changeCO2Class();
+		if(CHANGEWEATHER.equals(e.getActionCommand())) changeWeather();
+		if(START.equals(e.getActionCommand())) run();
+		if(STOP.equals(e.getActionCommand())) stop();
+		if(RESET.equals(e.getActionCommand())) reset();
+		if(EXIT.equals(e.getActionCommand())) exit();
+		
+	}
+	
+	//IMPLEMENTS TRAFFICSIMOBSERVER
+	@Override
+	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {}
+
+	@Override
+	public void onAdvanceEnd(RoadMap map, List<Event> events, int time) {}
+
+	@Override
+	public void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {
+		_map = map;
+	}
+
+	@Override
+	public void onReset(RoadMap map, List<Event> events, int time) {}
+
+	@Override
+	public void onRegister(RoadMap map, List<Event> events, int time) {
+		_map = map;
+	}
+	
+	@Override
+	public void onError(String err) {
+		JOptionPane.showMessageDialog(this.getParent(), err);
 	}
 }

@@ -127,6 +127,7 @@ public class VehiclesTableModel extends AbstractTableModel implements TrafficSim
 	@Override
 	public void onRegister(RoadMap map, List<Event> events, int time) {
 		_vehicles = new ArrayList<>();
+		setVehicleList(map.getVehicles());
 	}
 
 	@Override

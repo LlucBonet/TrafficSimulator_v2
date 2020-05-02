@@ -74,12 +74,6 @@ public class JunctionsTableModel extends AbstractTableModel implements TrafficSi
 		case 2:
 			List<Road> lr = _junctions.get(rowIndex).getInRoads();
 			o = "";
-//			for(int i = 0;  i < lr.size(); i++) {
-//			     o += lr.get(i).getId() + ":[";
-//			    for(int j = 0; j < _junctions.get(rowIndex).getQueueByRoad().size(); j++) {
-//			    	o += _junctions.get(rowIndex).getQueueByRoad().get(lr.get(i)).toString();
-//			    }
-//			}
 			for(int i = 0; i < lr.size(); i++) {
 				o += lr.get(i).getId() + ":" + _junctions.get(rowIndex).getQueueByRoad().get(lr.get(i));
 			}
@@ -107,6 +101,7 @@ public class JunctionsTableModel extends AbstractTableModel implements TrafficSi
 	@Override
 	public void onRegister(RoadMap map, List<Event> events, int time) {
 		_junctions = new ArrayList<>();
+		setJunctionList(map.getJunctions());
 	}
 
 	@Override

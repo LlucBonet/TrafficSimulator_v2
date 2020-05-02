@@ -85,11 +85,13 @@ public class EventsTableModel extends AbstractTableModel implements TrafficSimOb
 	@Override
 	public void onReset(RoadMap map, List<Event> events, int time) {
 		_events.clear();
+		update();
 	}
 
 	@Override
 	public void onRegister(RoadMap map, List<Event> events, int time) {
 		_events = new ArrayList<>();
+		setEventList(events);
 	}
 
 	@Override
