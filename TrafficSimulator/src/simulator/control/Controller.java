@@ -29,6 +29,10 @@ public class Controller {
 		else 
 			_eventFactory = eventFactory;
 	}
+	
+	public JSONObject report() {
+		return _trafficSimulator.report();
+	}
 
 	public void loadEvents(InputStream in) {
 		if(in != null) {

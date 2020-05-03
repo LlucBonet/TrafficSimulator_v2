@@ -53,6 +53,13 @@ public class TrafficSimulator implements Observable<TrafficSimObserver>{
 		for(TrafficSimObserver ob : _observers) {
 			ob.onAdvanceEnd(_map, _eventList, _simulatedTime);
 		}
+		try{
+			Thread.sleep(150);
+		}catch(InterruptedException e){
+			for(TrafficSimObserver ob : _observers) {
+				ob.onError(e.getLocalizedMessage());
+			}
+		}
 	}
 	
 	public void reset() {

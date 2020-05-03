@@ -4,10 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +28,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import simulator.control.Controller;
 import simulator.misc.Pair;
@@ -49,20 +57,21 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	private JMenuBar _menuBar;
 	
 	private final String LOAD = "load";
+	private final String SAVE = "save";
 	private final String CHANGECO2 = "changeCO2";
 	private final String CHANGEWEATHER = "changeWeather";
-	private final String START = "start";
+	private final String RUN = "run";
 	private final String STOP = "stop";
 	private final String RESET = "reset";
 	private final String EXIT = "exit";
 	
-	private JButton _loadButton;
-	private JButton _runButton;
-	private JButton _stopButton;
-	private JButton _exitButton;
-	private JButton _changeCO2ClassButton;
-	private JButton _changeWeatherButton;
-	private JButton _resetButton;
+//	private JButton _loadButton;
+//	private JButton _runButton;
+//	private JButton _stopButton;
+//	private JButton _exitButton;
+//	private JButton _changeCO2ClassButton;
+//	private JButton _changeWeatherButton;
+//	private JButton _resetButton;
 	private JSpinner _ticksSpinner;
 	
 	private JFileChooser _fc;
@@ -89,128 +98,108 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	private void initGUI() {
 		setLayout(new BorderLayout());
 		
-		
-		
-		_toolBar = new JToolBar();
-		
+		_menuBar = createMenuBar();
+		add(_menuBar, BorderLayout.PAGE_START);
+		_toolBar = createToolBar();
+		add(_toolBar, BorderLayout.PAGE_END);
+	}
+	
+	public JToolBar createToolBar() {
+		JToolBar toolBar = new JToolBar();
 		//load
 		_fc = new JFileChooser();
 		_fc.setCurrentDirectory(new File("resources/examples"));
-		_loadButton = new JButton();
-		_loadButton.setToolTipText("Load a file");
-		_loadButton.setIcon(new ImageIcon("resources/icons/open.png"));
-		_loadButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				loadFile();
-			}
-		});
-		_toolBar.add(_loadButton);
+		JButton loadButton = new JButton();
+		loadButton.setToolTipText("Load a file");
+		loadButton.setActionCommand(LOAD);
+		loadButton.setIcon(new ImageIcon("resources/icons/open.png"));
+		loadButton.addActionListener(this);
+		toolBar.add(loadButton);
 		
-		_toolBar.addSeparator();
+		JButton saveButton = new JButton();
+		saveButton.setToolTipText("Save progress");
+		saveButton.setActionCommand(SAVE);
+		saveButton.setIcon(new ImageIcon("resources/icons/save.png"));
+		saveButton.addActionListener(this);
+		toolBar.add(saveButton);
+		
+		toolBar.addSeparator();
 		
 		//change co2 class
-		_changeCO2ClassButton = new JButton();
-		_changeCO2ClassButton.setToolTipText("Change CO2 class of a vehicle");
-		_changeCO2ClassButton.setIcon(new ImageIcon("resources/icons/co2class.png"));
-
-		_changeCO2ClassButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				 changeCO2Class();
-			}
-		});
-		_toolBar.add(_changeCO2ClassButton);
+		JButton changeCO2ClassButton = new JButton();
+		changeCO2ClassButton.setToolTipText("Change CO2 class of a vehicle");
+		changeCO2ClassButton.setIcon(new ImageIcon("resources/icons/co2class.png"));
+		changeCO2ClassButton.setActionCommand(CHANGECO2);
+		changeCO2ClassButton.addActionListener(this);
+		toolBar.add(changeCO2ClassButton);
 		
 		//change weather
-		_changeWeatherButton = new JButton();
-		_changeWeatherButton.setToolTipText("Change Weather of a road");
-		_changeWeatherButton.setIcon(new ImageIcon("resources/icons/weather.png"));
-
-		_changeWeatherButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				 changeWeather();
-			}
-		});
-		_toolBar.add(_changeWeatherButton);
+		JButton changeWeatherButton = new JButton();
+		changeWeatherButton.setToolTipText("Change Weather of a road");
+		changeWeatherButton.setIcon(new ImageIcon("resources/icons/weather.png"));
+		changeWeatherButton.setActionCommand(CHANGEWEATHER);
+		changeWeatherButton.addActionListener(this);
+		toolBar.add(changeWeatherButton);
 		
-		_toolBar.addSeparator();
+		toolBar.addSeparator();
 	    
-		
 		//run 
-		_runButton = new JButton();
-		_runButton.setToolTipText("Run");
-		_runButton.setIcon(new ImageIcon("resources/icons/run.png"));
-		_runButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if(_stopped)
-					run();
-			}
-		});
-		_toolBar.add(_runButton);
+		JButton runButton = new JButton();
+		runButton.setToolTipText("Run");
+		runButton.setActionCommand(RUN);
+		runButton.setIcon(new ImageIcon("resources/icons/run.png"));
+		runButton.addActionListener(this);
+		toolBar.add(runButton);
 		
 		//stop
-		_stopButton = new JButton();
-		_stopButton.setToolTipText("Stop");	
-		_stopButton.setIcon(new ImageIcon("resources/icons/stop.png"));
-		_stopButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if(!_stopped) stop();
-			}
-		});
-		_toolBar.add(_stopButton);
+		JButton stopButton = new JButton();
+		stopButton.setToolTipText("Stop");	
+		stopButton.setActionCommand(STOP);
+		stopButton.setIcon(new ImageIcon("resources/icons/stop.png"));
+		stopButton.addActionListener(this);
+		toolBar.add(stopButton);
 		
 		//reset
-		_resetButton = new JButton();
-		_resetButton.setToolTipText("Reset");
-		_resetButton.setIcon(new ImageIcon("resources/icons/reset.jpg"));
-		_resetButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				reset();
-			}
-		});
-		_toolBar.add(_resetButton);
+		JButton resetButton = new JButton();
+		resetButton.setToolTipText("Reset");
+		resetButton.setActionCommand(RESET);
+		resetButton.setIcon(new ImageIcon("resources/icons/reset.jpg"));
+		resetButton.addActionListener(this);
+		toolBar.add(resetButton);
 		
 		//ticks
 		JLabel ticks = new JLabel("Ticks: ");
 		ticks.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-		_toolBar.add(ticks);
+		toolBar.add(ticks);
 		_ticksSpinner = new JSpinner();
 		_ticksSpinner.setToolTipText("1-1000");
 		_ticksSpinner.setValue(10);
-		_toolBar.add(_ticksSpinner);
+		toolBar.add(_ticksSpinner);
 		
-		_toolBar.add(Box.createHorizontalGlue());
-		_toolBar.addSeparator();
+		toolBar.add(Box.createHorizontalGlue());
+		toolBar.addSeparator();
 		
 		//exit
-		_exitButton = new JButton();
-		_exitButton.setToolTipText("Exit");
-		_exitButton.setIcon(new ImageIcon("resources/icons/exit.png"));
-		_exitButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				exit();
-			}
-		});
-		_toolBar.add(_exitButton, -1);
+		JButton exitButton = new JButton();
+		exitButton.setToolTipText("Exit");
+		exitButton.setActionCommand(EXIT);
+		exitButton.setIcon(new ImageIcon("resources/icons/exit.png"));
+		exitButton.addActionListener(this);
+		toolBar.add(exitButton, -1);
 		
-		add(_toolBar, BorderLayout.PAGE_START);
-		
-		initMenuBar();
+		return toolBar;
 	}
 	
-	public void initMenuBar() {
-		_menuBar = new JMenuBar();
+	public JMenuBar createMenuBar() {
+		JMenuBar menuBar = new JMenuBar();
 		
-		JMenu menu = new JMenu("Menu"); 
-		JMenuItem loadF = new JMenuItem("Load File");
+		JMenu file = new JMenu("File"); 
+		JMenuItem loadF = new JMenuItem("Load");
 		loadF.setActionCommand(LOAD);
 		loadF.addActionListener(this);
+		JMenuItem saveF = new JMenuItem("Save");
+		saveF.setActionCommand(SAVE);
+		saveF.addActionListener(this);
 		JMenuItem changeCO2 = new JMenuItem("Change CO2 Class");
 		changeCO2.setActionCommand(CHANGECO2);
 		changeCO2.addActionListener(this);
@@ -219,31 +208,44 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 		changeW.addActionListener(this);
 		JMenuItem exit = new JMenuItem("Exit");
 		exit.setActionCommand(EXIT);
+		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
+				 ActionEvent.SHIFT_MASK));
 		exit.addActionListener(this);
 		
-		menu.add(loadF);
-		menu.add(changeCO2);
-		menu.add(changeW);
-		menu.add(exit);
-		_menuBar.add(menu);
+		file.add(loadF);
+		file.add(saveF);
+		file.addSeparator();
+		file.add(changeCO2);
+		file.add(changeW);
+		file.addSeparator();
+		file.add(exit);
+		file.setMnemonic(KeyEvent.VK_F); //Alt f
+		menuBar.add(file);
 		
 		JMenu execution = new JMenu("Execution");
 		JMenuItem start = new JMenuItem("Start");
-		start.setActionCommand(START);
+		start.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+				 ActionEvent.SHIFT_MASK));
+		start.setActionCommand(RUN);
 		start.addActionListener(this);
 		JMenuItem stop = new JMenuItem("Stop");
 		stop.setActionCommand(STOP);
+		stop.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+				 ActionEvent.CTRL_MASK));
 		stop.addActionListener(this);
 		JMenuItem reset = new JMenuItem("Reset");
 		reset.setActionCommand(RESET);
+		reset.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
+				 ActionEvent.SHIFT_MASK));
 		reset.addActionListener(this);
 		
 		execution.add(start);
 		execution.add(stop);
 		execution.add(reset);
-		_menuBar.add(execution);
-		
-		this.add(_menuBar);
+		execution.setMnemonic(KeyEvent.VK_E); //Alt s
+		menuBar.add(execution);
+	
+		return menuBar;
 	}
 	
 	private void loadFile() {
@@ -263,6 +265,34 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 		else {
 			System.out.println("load cancelled by user");
 		}
+	}
+	
+	private void saveFile() {
+		final int selection = _fc.showOpenDialog(_parent);
+		if(selection == JFileChooser.APPROVE_OPTION) {
+			File file = _fc.getSelectedFile();
+			writeFile(file);
+		}
+	}
+	
+	private void writeFile(File file) {
+		OutputStream out;
+		try {
+			out = new FileOutputStream(file);
+			if(out != null) {
+				PrintStream p = new PrintStream(out);
+				JSONObject obj = new JSONObject();
+				JSONArray arr = new JSONArray();
+				arr.put(_ctrl.report());
+	
+				obj.put("time_" + _ctrl.getSimulatedTime(), arr);
+				p.println(obj.toString());
+				p.close();
+			}	
+		} catch (FileNotFoundException e) {
+			onError(e.getLocalizedMessage());
+		}
+		
 	}
 	
 	public void changeCO2Class() {
@@ -348,13 +378,13 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(LOAD.equals(e.getActionCommand())) loadFile();
+		if(SAVE.equals(e.getActionCommand())) saveFile();
 		if(CHANGECO2.equals(e.getActionCommand())) changeCO2Class();
 		if(CHANGEWEATHER.equals(e.getActionCommand())) changeWeather();
-		if(START.equals(e.getActionCommand())) run();
+		if(RUN.equals(e.getActionCommand())) run();
 		if(STOP.equals(e.getActionCommand())) stop();
 		if(RESET.equals(e.getActionCommand())) reset();
-		if(EXIT.equals(e.getActionCommand())) exit();
-		
+		if(EXIT.equals(e.getActionCommand())) exit();	
 	}
 	
 	//IMPLEMENTS TRAFFICSIMOBSERVER
