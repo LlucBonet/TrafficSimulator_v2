@@ -52,12 +52,16 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	
 	private Controller _ctrl;
 	private RoadMap _map;
+	private int _time;
 	
 	private JToolBar _toolBar;
 	private JMenuBar _menuBar;
 	
+	private File _file;
+	
 	private final String LOAD = "load";
 	private final String SAVE = "save";
+	private final String RESUME = "resume";
 	private final String CHANGECO2 = "changeCO2";
 	private final String CHANGEWEATHER = "changeWeather";
 	private final String RUN = "run";
@@ -65,13 +69,6 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	private final String RESET = "reset";
 	private final String EXIT = "exit";
 	
-//	private JButton _loadButton;
-//	private JButton _runButton;
-//	private JButton _stopButton;
-//	private JButton _exitButton;
-//	private JButton _changeCO2ClassButton;
-//	private JButton _changeWeatherButton;
-//	private JButton _resetButton;
 	private JSpinner _ticksSpinner;
 	
 	private JFileChooser _fc;
@@ -98,17 +95,17 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	private void initGUI() {
 		setLayout(new BorderLayout());
 		
-		_menuBar = createMenuBar();
-		add(_menuBar, BorderLayout.PAGE_START);
+		//_menuBar = createMenuBar();
+		//add(_menuBar, BorderLayout.PAGE_START);
 		_toolBar = createToolBar();
-		add(_toolBar, BorderLayout.PAGE_END);
+		add(_toolBar, BorderLayout.PAGE_START);
 	}
 	
 	public JToolBar createToolBar() {
 		JToolBar toolBar = new JToolBar();
+		
 		//load
 		_fc = new JFileChooser();
-		_fc.setCurrentDirectory(new File("resources/examples"));
 		JButton loadButton = new JButton();
 		loadButton.setToolTipText("Load a file");
 		loadButton.setActionCommand(LOAD);
@@ -116,12 +113,21 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 		loadButton.addActionListener(this);
 		toolBar.add(loadButton);
 		
+		//save
 		JButton saveButton = new JButton();
 		saveButton.setToolTipText("Save progress");
 		saveButton.setActionCommand(SAVE);
 		saveButton.setIcon(new ImageIcon("resources/icons/save.png"));
 		saveButton.addActionListener(this);
 		toolBar.add(saveButton);
+		
+		//resume
+		JButton resumeButton = new JButton();
+		resumeButton.setToolTipText("Save progress");
+		resumeButton.setActionCommand(SAVE);
+		resumeButton.setIcon(new ImageIcon("resources/icons/resume.jpg"));
+		resumeButton.addActionListener(this);
+		toolBar.add(resumeButton);
 		
 		toolBar.addSeparator();
 		
@@ -249,14 +255,14 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	}
 	
 	private void loadFile() {
-		
+		_fc.setCurrentDirectory(new File("resources/examples"));
 		final int selection = _fc.showOpenDialog(_parent);
 		if (selection == JFileChooser.APPROVE_OPTION) {
-			File file = _fc.getSelectedFile();
-			System.out.println("loading " + file.getName());
+			_file = _fc.getSelectedFile();
+			System.out.println("loading " + _file.getName());
 			try {
 				_ctrl.reset();
-				InputStream in = new FileInputStream(file);
+				InputStream in = new FileInputStream(_file);
 				_ctrl.loadEvents(in);
 			} catch (FileNotFoundException e) {
 				onError(e.getLocalizedMessage());
@@ -268,6 +274,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	}
 	
 	private void saveFile() {
+		_fc.setCurrentDirectory(new File("resources/tmp"));
 		final int selection = _fc.showOpenDialog(_parent);
 		if(selection == JFileChooser.APPROVE_OPTION) {
 			File file = _fc.getSelectedFile();
@@ -293,6 +300,10 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 			onError(e.getLocalizedMessage());
 		}
 		
+	}
+	
+	void resume() {
+//		run_sim()
 	}
 	
 	public void changeCO2Class() {
@@ -378,18 +389,21 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(LOAD.equals(e.getActionCommand())) loadFile();
-		if(SAVE.equals(e.getActionCommand())) saveFile();
-		if(CHANGECO2.equals(e.getActionCommand())) changeCO2Class();
-		if(CHANGEWEATHER.equals(e.getActionCommand())) changeWeather();
-		if(RUN.equals(e.getActionCommand())) run();
-		if(STOP.equals(e.getActionCommand())) stop();
-		if(RESET.equals(e.getActionCommand())) reset();
-		if(EXIT.equals(e.getActionCommand())) exit();	
+		else if(SAVE.equals(e.getActionCommand())) saveFile();
+		else if(RESUME.equals(e.getActionCommand())) resume();
+		else if(CHANGECO2.equals(e.getActionCommand())) changeCO2Class();
+		else if(CHANGEWEATHER.equals(e.getActionCommand())) changeWeather();
+		else if(RUN.equals(e.getActionCommand())) run();
+		else if(STOP.equals(e.getActionCommand())) stop();
+		else if(RESET.equals(e.getActionCommand())) reset();
+		else if(EXIT.equals(e.getActionCommand())) exit();	
 	}
 	
 	//IMPLEMENTS TRAFFICSIMOBSERVER
 	@Override
-	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {}
+	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {
+		_time = time;
+	}
 
 	@Override
 	public void onAdvanceEnd(RoadMap map, List<Event> events, int time) {}
@@ -405,6 +419,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	@Override
 	public void onRegister(RoadMap map, List<Event> events, int time) {
 		_map = map;
+		_time = time;
 	}
 	
 	@Override
