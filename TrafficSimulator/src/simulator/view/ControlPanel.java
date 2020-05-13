@@ -52,10 +52,8 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	
 	private Controller _ctrl;
 	private RoadMap _map;
-	private int _time;
 	
 	private JToolBar _toolBar;
-	private JMenuBar _menuBar;
 	
 	private File _file;
 	
@@ -123,7 +121,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 		
 		//resume
 		JButton resumeButton = new JButton();
-		resumeButton.setToolTipText("Save progress");
+		resumeButton.setToolTipText("Resume");
 		resumeButton.setActionCommand(SAVE);
 		resumeButton.setIcon(new ImageIcon("resources/icons/resume.jpg"));
 		resumeButton.addActionListener(this);
@@ -401,9 +399,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	
 	//IMPLEMENTS TRAFFICSIMOBSERVER
 	@Override
-	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {
-		_time = time;
-	}
+	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {}
 
 	@Override
 	public void onAdvanceEnd(RoadMap map, List<Event> events, int time) {}
@@ -419,7 +415,6 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	@Override
 	public void onRegister(RoadMap map, List<Event> events, int time) {
 		_map = map;
-		_time = time;
 	}
 	
 	@Override
