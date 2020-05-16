@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
@@ -118,9 +119,12 @@ abstract public class AddEventDialog<T extends SimulatedObject, U> extends JDial
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (_object.getSelectedItem() != null) {
+				if (_object.getSelectedItem() != null && Integer.parseInt(_ticksSpinner.getValue().toString()) > 0) {
 					_status = 1;
 					AddEventDialog.this.setVisible(false);
+				}
+				else if(Integer.parseInt(_ticksSpinner.getValue().toString()) < 1) {
+					JOptionPane.showMessageDialog(null, "El valor de ticks tiene que ser mayor a 0", "Error", JOptionPane.WARNING_MESSAGE);;
 				}
 			}
 		});
