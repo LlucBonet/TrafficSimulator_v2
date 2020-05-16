@@ -193,64 +193,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 		
 		return toolBar;
 	}
-	
-	public JMenuBar createMenuBar() {
-		JMenuBar menuBar = new JMenuBar();
-		
-		JMenu file = new JMenu("File"); 
-		JMenuItem loadF = new JMenuItem("Load");
-		loadF.setActionCommand(LOAD);
-		loadF.addActionListener(this);
-		JMenuItem saveF = new JMenuItem("Save");
-		saveF.setActionCommand(SAVE);
-		saveF.addActionListener(this);
-		JMenuItem changeCO2 = new JMenuItem("Change CO2 Class");
-		changeCO2.setActionCommand(CHANGECO2);
-		changeCO2.addActionListener(this);
-		JMenuItem changeW = new JMenuItem("Change Weather");
-		changeW.setActionCommand(CHANGEWEATHER);
-		changeW.addActionListener(this);
-		JMenuItem exit = new JMenuItem("Exit");
-		exit.setActionCommand(EXIT);
-		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
-				 ActionEvent.SHIFT_MASK));
-		exit.addActionListener(this);
-		
-		file.add(loadF);
-		file.add(saveF);
-		file.addSeparator();
-		file.add(changeCO2);
-		file.add(changeW);
-		file.addSeparator();
-		file.add(exit);
-		file.setMnemonic(KeyEvent.VK_F); //Alt f
-		menuBar.add(file);
-		
-		JMenu execution = new JMenu("Execution");
-		JMenuItem start = new JMenuItem("Start");
-		start.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-				 ActionEvent.SHIFT_MASK));
-		start.setActionCommand(RUN);
-		start.addActionListener(this);
-		JMenuItem stop = new JMenuItem("Stop");
-		stop.setActionCommand(STOP);
-		stop.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-				 ActionEvent.CTRL_MASK));
-		stop.addActionListener(this);
-		JMenuItem reset = new JMenuItem("Reset");
-		reset.setActionCommand(RESET);
-		reset.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
-				 ActionEvent.SHIFT_MASK));
-		reset.addActionListener(this);
-		
-		execution.add(start);
-		execution.add(stop);
-		execution.add(reset);
-		execution.setMnemonic(KeyEvent.VK_E); //Alt s
-		menuBar.add(execution);
-	
-		return menuBar;
-	}
+
 	
 	private void loadFile() {
 		_fc.setCurrentDirectory(new File("resources/examples"));
