@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import javax.swing.JOptionPane;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -35,12 +37,16 @@ public class Controller {
 	}
 
 	public void loadEvents(InputStream in) {
-		if(in != null) {
-			_jo = new JSONObject(new JSONTokener(in));
-		}
-		JSONArray events = _jo.getJSONArray("events");
-		for(int i = 0; i < events.length(); i++) {
-			_trafficSimulator.addEvent(_eventFactory.createInstance(events.getJSONObject(i)));
+		try {
+			if(in != null) {
+				_jo = new JSONObject(new JSONTokener(in));
+			}
+			JSONArray events = _jo.getJSONArray("events");
+			for(int i = 0; i < events.length(); i++) {
+				_trafficSimulator.addEvent(_eventFactory.createInstance(events.getJSONObject(i)));
+			}
+		}catch(Exception e) {
+			_trafficSimulator.error(e.getLocalizedMessage());
 		}
 	}
 	

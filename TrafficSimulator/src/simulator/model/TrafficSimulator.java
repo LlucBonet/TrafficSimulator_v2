@@ -21,6 +21,7 @@ public class TrafficSimulator implements Observable<TrafficSimObserver>{
 		_observers = new ArrayList<TrafficSimObserver>();
 	}
 	
+	
 	public void addEvent(Event e) {
 		_eventList.add(e);
 		for(TrafficSimObserver ob : _observers) {
@@ -79,6 +80,12 @@ public class TrafficSimulator implements Observable<TrafficSimObserver>{
 		obj.put("state", obj2);
 		
 		return obj;
+	}
+	
+	public void error(String e) {
+		for(TrafficSimObserver ob : _observers) {
+			ob.onError(e);
+		}
 	}
 
 	//IMPLEMENTS OBSERVABLE<TRAFFICSIMOBSERVER>
