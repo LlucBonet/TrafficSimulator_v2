@@ -204,7 +204,11 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 			try {
 				_ctrl.reset();
 				InputStream in = new FileInputStream(_file);
-				_ctrl.loadEvents(in);
+				try {
+					_ctrl.loadEvents(in);
+				} catch (Exception e) {
+					onError("Archivo no valido: " + e.getLocalizedMessage());
+				}
 			} catch (FileNotFoundException e) {
 				onError(e.getLocalizedMessage());
 			}
@@ -311,7 +315,11 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	
 	private void reset() {
 		_ctrl.reset();
-		_ctrl.loadEvents(null);
+		try {
+			_ctrl.loadEvents(null);
+		} catch (Exception e) {
+			onError("Archivo no válido: " + e.getLocalizedMessage());
+		}
 	}
 	
 	private void enableToolBar(boolean enable) {

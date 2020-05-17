@@ -161,7 +161,11 @@ public class Main {
 		final Controller ctrl = new Controller(tf, _eventsFactory);
 		if(_inFile != null) {
 			InputStream in = new FileInputStream(new File(_inFile));
-			ctrl.loadEvents(in);
+			try {
+				ctrl.loadEvents(in);
+			} catch (Exception e) {
+				System.err.println("Archivo no valido: " + e.getLocalizedMessage());
+			}
 			in.close();
 		}
 		SwingUtilities.invokeLater(new Runnable() {

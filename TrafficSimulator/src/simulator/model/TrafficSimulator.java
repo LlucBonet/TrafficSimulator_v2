@@ -82,11 +82,6 @@ public class TrafficSimulator implements Observable<TrafficSimObserver>{
 		return obj;
 	}
 	
-	public void error(String e) {
-		for(TrafficSimObserver ob : _observers) {
-			ob.onError(e);
-		}
-	}
 
 	//IMPLEMENTS OBSERVABLE<TRAFFICSIMOBSERVER>
 	@Override
