@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,14 +20,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import org.json.JSONArray;
@@ -204,13 +199,10 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 			try {
 				_ctrl.reset();
 				InputStream in = new FileInputStream(_file);
-				try {
 					_ctrl.loadEvents(in);
-				} catch (Exception e) {
-					onError("Archivo no valido: " + e.getLocalizedMessage());
-				}
-			} catch (FileNotFoundException e) {
-				onError(e.getLocalizedMessage());
+
+			} catch (Exception e) {
+				onError("Archivo no valido: " + e.getLocalizedMessage());
 			}
 		}
 		else {
