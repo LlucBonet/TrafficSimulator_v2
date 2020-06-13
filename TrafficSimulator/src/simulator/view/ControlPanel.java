@@ -47,10 +47,21 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	
 	private Controller _ctrl;
 	private RoadMap _map;
+	private int _time;
 	
 	private JToolBar _toolBar;
 	
 	private File _file;
+	
+	private JButton _loadButton;
+	private JButton _saveButton;
+	private JButton _resumeButton;
+	private JButton _changeCO2ClassButton;
+	private JButton _changeWeatherButton;
+	private JButton _runButton;
+	private JButton _stopButton;
+	private JButton _resetButton;
+
 	
 	private final String LOAD = "load";
 	private final String SAVE = "save";
@@ -99,72 +110,72 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 		
 		//load
 		_fc = new JFileChooser();
-		JButton loadButton = new JButton();
-		loadButton.setToolTipText("Load a file");
-		loadButton.setActionCommand(LOAD);
-		loadButton.setIcon(new ImageIcon("resources/icons/open.png"));
-		loadButton.addActionListener(this);
-		toolBar.add(loadButton);
+		_loadButton = new JButton();
+		_loadButton.setToolTipText("Load a file");
+		_loadButton.setActionCommand(LOAD);
+		_loadButton.setIcon(new ImageIcon("resources/icons/open.png"));
+		_loadButton.addActionListener(this);
+		toolBar.add(_loadButton);
 		
 		//save
-		JButton saveButton = new JButton();
-		saveButton.setToolTipText("Save progress");
-		saveButton.setActionCommand(SAVE);
-		saveButton.setIcon(new ImageIcon("resources/icons/save.png"));
-		saveButton.addActionListener(this);
-		toolBar.add(saveButton);
+		_saveButton = new JButton();
+		_saveButton.setToolTipText("Save progress");
+		_saveButton.setActionCommand(SAVE);
+		_saveButton.setIcon(new ImageIcon("resources/icons/save.png"));
+		_saveButton.addActionListener(this);
+		toolBar.add(_saveButton);
 		
 		//resume
-		JButton resumeButton = new JButton();
-		resumeButton.setToolTipText("Resume");
-		resumeButton.setActionCommand(SAVE);
-		resumeButton.setIcon(new ImageIcon("resources/icons/resume.jpg"));
-		resumeButton.addActionListener(this);
-		toolBar.add(resumeButton);
+		_resumeButton = new JButton();
+		_resumeButton.setToolTipText("Resume");
+		_resumeButton.setActionCommand(SAVE);
+		_resumeButton.setIcon(new ImageIcon("resources/icons/resume.jpg"));
+		_resumeButton.addActionListener(this);
+		toolBar.add(_resumeButton);
 		
 		toolBar.addSeparator();
 		
 		//change co2 class
-		JButton changeCO2ClassButton = new JButton();
-		changeCO2ClassButton.setToolTipText("Change CO2 class of a vehicle");
-		changeCO2ClassButton.setIcon(new ImageIcon("resources/icons/co2class.png"));
-		changeCO2ClassButton.setActionCommand(CHANGECO2);
-		changeCO2ClassButton.addActionListener(this);
-		toolBar.add(changeCO2ClassButton);
+		_changeCO2ClassButton = new JButton();
+		_changeCO2ClassButton.setToolTipText("Change CO2 class of a vehicle");
+		_changeCO2ClassButton.setIcon(new ImageIcon("resources/icons/co2class.png"));
+		_changeCO2ClassButton.setActionCommand(CHANGECO2);
+		_changeCO2ClassButton.addActionListener(this);
+		toolBar.add(_changeCO2ClassButton);
 		
 		//change weather
-		JButton changeWeatherButton = new JButton();
-		changeWeatherButton.setToolTipText("Change Weather of a road");
-		changeWeatherButton.setIcon(new ImageIcon("resources/icons/weather.png"));
-		changeWeatherButton.setActionCommand(CHANGEWEATHER);
-		changeWeatherButton.addActionListener(this);
-		toolBar.add(changeWeatherButton);
+		_changeWeatherButton = new JButton();
+		_changeWeatherButton.setToolTipText("Change Weather of a road");
+		_changeWeatherButton.setIcon(new ImageIcon("resources/icons/weather.png"));
+		_changeWeatherButton.setActionCommand(CHANGEWEATHER);
+		_changeWeatherButton.addActionListener(this);
+		toolBar.add(_changeWeatherButton);
 		
 		toolBar.addSeparator();
 	    
 		//run 
-		JButton runButton = new JButton();
-		runButton.setToolTipText("Run");
-		runButton.setActionCommand(RUN);
-		runButton.setIcon(new ImageIcon("resources/icons/run.png"));
-		runButton.addActionListener(this);
-		toolBar.add(runButton);
+		_runButton = new JButton();
+		_runButton.setToolTipText("Run");
+		_runButton.setActionCommand(RUN);
+		_runButton.setIcon(new ImageIcon("resources/icons/run.png"));
+		_runButton.addActionListener(this);
+		toolBar.add(_runButton);
 		
 		//stop
-		JButton stopButton = new JButton();
-		stopButton.setToolTipText("Stop");	
-		stopButton.setActionCommand(STOP);
-		stopButton.setIcon(new ImageIcon("resources/icons/stop.png"));
-		stopButton.addActionListener(this);
-		toolBar.add(stopButton);
+		_stopButton = new JButton();
+		_stopButton.setToolTipText("Stop");	
+		_stopButton.setActionCommand(STOP);
+		_stopButton.setIcon(new ImageIcon("resources/icons/stop.png"));
+		_stopButton.addActionListener(this);
+		toolBar.add(_stopButton);
 		
 		//reset
-		JButton resetButton = new JButton();
-		resetButton.setToolTipText("Reset");
-		resetButton.setActionCommand(RESET);
-		resetButton.setIcon(new ImageIcon("resources/icons/reset.jpg"));
-		resetButton.addActionListener(this);
-		toolBar.add(resetButton);
+		_resetButton = new JButton();
+		_resetButton.setToolTipText("Reset");
+		_resetButton.setActionCommand(RESET);
+		_resetButton.setIcon(new ImageIcon("resources/icons/reset.jpg"));
+		_resetButton.addActionListener(this);
+		toolBar.add(_resetButton);
 		
 		//ticks
 		JLabel ticks = new JLabel("Ticks: ");
@@ -229,7 +240,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 				JSONArray arr = new JSONArray();
 				arr.put(_ctrl.report());
 	
-				obj.put("time_" + _ctrl.getSimulatedTime(), arr);
+				obj.put("time_" + _time, arr);
 				p.println(obj.toString());
 				p.close();
 			}	
@@ -252,7 +263,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 			List<Pair<String, Integer>> cs = new ArrayList<>();
 			cs.add(new Pair<String, Integer>(dialog.getVehicle().getId(), dialog.getCO2Class()));
 			try {
-				_ctrl.addEvent(new SetContClassEvent(_ctrl.getSimulatedTime() + dialog.getTicks(), cs));
+				_ctrl.addEvent(new SetContClassEvent(_time + dialog.getTicks(), cs));
 			}catch(Exception e) {
 				onError("Something went wrong: " + e.getLocalizedMessage());
 			}
@@ -267,7 +278,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 			List<Pair<String, Weather>> ws = new ArrayList<>();
 			ws.add(new Pair<String, Weather>(dialog.getRoad().getId(), dialog.getWeather()));
 			try {
-				_ctrl.addEvent(new SetWeatherEvent(_ctrl.getSimulatedTime() + dialog.getTicks(), ws));
+				_ctrl.addEvent(new SetWeatherEvent(_time + dialog.getTicks(), ws));
 			}catch(Exception e) {
 				onError("Something went wrong: " + e.getLocalizedMessage());
 			}
@@ -277,6 +288,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	private void run() {
 		final int n = Integer.parseInt(_ticksSpinner.getValue().toString());
 		_stopped = false;
+		enableToolBar(false);
 		run_sim(n);
 	}
 	
@@ -315,7 +327,14 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	}
 	
 	private void enableToolBar(boolean enable) {
-		_toolBar.setEnabled(enable);
+		this._loadButton.setEnabled(enable);
+		this._saveButton.setEnabled(enable);
+		this._resumeButton.setEnabled(enable);
+		this._changeCO2ClassButton.setEnabled(enable);
+		this._changeWeatherButton.setEnabled(enable);
+		this._runButton.setEnabled(enable);
+		this._stopButton.setEnabled(!_stopped);
+		this._resetButton.setEnabled(enable);
 	}
 	
 	private void exit() {
@@ -345,19 +364,25 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {}
 
 	@Override
-	public void onAdvanceEnd(RoadMap map, List<Event> events, int time) {}
+	public void onAdvanceEnd(RoadMap map, List<Event> events, int time) {
+		_time = time;
+	}
 
 	@Override
 	public void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {
 		_map = map;
+		_time = time;
 	}
 
 	@Override
-	public void onReset(RoadMap map, List<Event> events, int time) {}
+	public void onReset(RoadMap map, List<Event> events, int time) {
+		_time = time;
+	}
 
 	@Override
 	public void onRegister(RoadMap map, List<Event> events, int time) {
 		_map = map;
+		_time = time;
 	}
 	
 	@Override
