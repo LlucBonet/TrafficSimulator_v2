@@ -114,6 +114,9 @@ public class Main {
 	private static void parseModeOption(CommandLine line) throws ParseException{
 		if(line.hasOption("m")) {
 			_mode = line.getOptionValue("m");
+			if(_mode != "console" && _mode != "gui") {
+				throw new ParseException("Available Mode options: console, gui");
+			}
 		}
 	}
 	private static void initFactories() {
