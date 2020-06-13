@@ -1,9 +1,6 @@
 package simulator.view;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.table.AbstractTableModel;
 
 import simulator.control.Controller;
 import simulator.model.Event;
@@ -12,7 +9,7 @@ import simulator.model.TrafficSimObserver;
 import simulator.model.Vehicle;
 import simulator.model.VehicleStatus;
 
-public class VehiclesTableModel extends AbstractTableModel implements TrafficSimObserver {
+public class VehiclesTableModel extends TableModel<Vehicle> implements TrafficSimObserver {
 
 	/**
 	 * 
@@ -20,38 +17,16 @@ public class VehiclesTableModel extends AbstractTableModel implements TrafficSim
 	private static final long serialVersionUID = 1L;
 
 	private Controller _ctrl;
-	private List<Vehicle> _vehicles;
 	private String[] _colNames = {"Id", "Location", "Itinerary", "CO2 Class.", "Max. Speed", "Speed", "Total CO2", "Distance"};
 	
 	public VehiclesTableModel(Controller ctrl) {
 		_ctrl = ctrl;
 		_ctrl.addObserver(this);
-		_vehicles = null;
-	}
-	
-
-	@Override
-	public boolean isCellEditable(int row, int column) {
-		return false;
-	}
-	
-	public void update() {
-		fireTableDataChanged();
-	}
-	
-	public void setVehicleList(List<Vehicle> v) {
-		_vehicles = v;
-		update();
 	}
 	
 	@Override
 	public String getColumnName(int col) {
 		return _colNames[col];
-	}
-	
-	@Override
-	public int getRowCount() {
-		return _vehicles == null ? 0 : _vehicles.size();
 	}
 
 	@Override
@@ -64,21 +39,21 @@ public class VehiclesTableModel extends AbstractTableModel implements TrafficSim
 		Object o = null;
 		switch(columnIndex) {
 		case 0:
-			o = _vehicles.get(rowIndex).getId();
+			o = getList().get(rowIndex).getId();
 			break;
 		case 1:
 			o = "";
-			VehicleStatus vs = _vehicles.get(rowIndex).getStatus();
+			VehicleStatus vs = getList().get(rowIndex).getStatus();
 			switch(vs) {
 			case PENDING:
 				o = "Pending";
 				break;
 			case TRAVELING:
-				o += _vehicles.get(rowIndex).getRoad().toString() 
-				  + ":" + _vehicles.get(rowIndex).getLocation();
+				o += getList().get(rowIndex).getRoad().toString() 
+				  + ":" + getList().get(rowIndex).getLocation();
 				break;
 			case WAITING:
-				o = "Waiting:" + _vehicles.get(rowIndex).getRoad().getDest();
+				o = "Waiting:" + getList().get(rowIndex).getRoad().getDest();
 				break;
 			case ARRIVED:
 				o = "Arrived";
@@ -86,22 +61,22 @@ public class VehiclesTableModel extends AbstractTableModel implements TrafficSim
 			}
 			break;
 		case 2:
-			o = _vehicles.get(rowIndex).getItinerary().toString();
+			o = getList().get(rowIndex).getItinerary().toString();
 			break;
 		case 3:
-			o = _vehicles.get(rowIndex).getContClass();
+			o = getList().get(rowIndex).getContClass();
 			break;
 		case 4:
-			o = _vehicles.get(rowIndex).getMaxSpeed();
+			o = getList().get(rowIndex).getMaxSpeed();
 			break;
 		case 5:
-			o = _vehicles.get(rowIndex).getActualSpeed();
+			o = getList().get(rowIndex).getActualSpeed();
 			break;
 		case 6:
-			o = _vehicles.get(rowIndex).getTotalCont();
+			o = getList().get(rowIndex).getTotalCont();
 			break;
 		case 7:
-			o = _vehicles.get(rowIndex).getTotalDistance();
+			o = getList().get(rowIndex).getTotalDistance();
 			break;
 	}
 		return o;
@@ -112,7 +87,7 @@ public class VehiclesTableModel extends AbstractTableModel implements TrafficSim
 
 	@Override
 	public void onAdvanceEnd(RoadMap map, List<Event> events, int time) {
-		setVehicleList(map.getVehicles());
+		setList(map.getVehicles());
 	}
 
 	@Override
@@ -120,13 +95,12 @@ public class VehiclesTableModel extends AbstractTableModel implements TrafficSim
 
 	@Override
 	public void onReset(RoadMap map, List<Event> events, int time) {
-		setVehicleList(map.getVehicles());
+		setList(map.getVehicles());
 	}
 
 	@Override
 	public void onRegister(RoadMap map, List<Event> events, int time) {
-		_vehicles = new ArrayList<>();
-		setVehicleList(map.getVehicles());
+		setList(map.getVehicles());
 	}
 
 	@Override

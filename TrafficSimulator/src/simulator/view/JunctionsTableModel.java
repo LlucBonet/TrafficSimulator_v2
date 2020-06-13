@@ -1,9 +1,6 @@
 package simulator.view;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.table.AbstractTableModel;
 
 import simulator.control.Controller;
 import simulator.model.Event;
@@ -12,7 +9,7 @@ import simulator.model.Road;
 import simulator.model.RoadMap;
 import simulator.model.TrafficSimObserver;
 
-public class JunctionsTableModel extends AbstractTableModel implements TrafficSimObserver {
+public class JunctionsTableModel extends TableModel<Junction> implements TrafficSimObserver {
 
 	/**
 	 * 
@@ -21,36 +18,15 @@ public class JunctionsTableModel extends AbstractTableModel implements TrafficSi
 
 	private String[] _colNames = {"Id", "Green", "Queues"};
 	private Controller _ctrl;
-	private List<Junction> _junctions;
 	
 	public JunctionsTableModel(Controller ctrl) {
 		_ctrl = ctrl;
 		_ctrl.addObserver(this);
-		_junctions = null;
-	}
-	
-	@Override
-	public boolean isCellEditable(int row, int column) {
-		return false;
-	}
-	
-	public void update() {
-		this.fireTableDataChanged();
-	}
-	
-	public void setJunctionList(List<Junction> j) {
-		_junctions = j;
-		update();
 	}
 
 	@Override
 	public String getColumnName(int col) {
 		return _colNames[col];
-	}
-	
-	@Override
-	public int getRowCount() {
-		return _junctions == null ? 0 : _junctions.size();
 	}
 
 	@Override
@@ -63,19 +39,19 @@ public class JunctionsTableModel extends AbstractTableModel implements TrafficSi
 		Object o = null;
 		switch(columnIndex) {
 		case 0:
-			o = _junctions.get(rowIndex).getId();
+			o = getList().get(rowIndex).getId();
 			break;
 		case 1:
-			int index = _junctions.get(rowIndex).getGreenLightIndex();
+			int index = getList().get(rowIndex).getGreenLightIndex();
 			if(index == -1) o = "NONE";
 			else
-				o = _junctions.get(rowIndex).getInRoads().get(index);
+				o = getList().get(rowIndex).getInRoads().get(index);
 			break;
 		case 2:
-			List<Road> lr = _junctions.get(rowIndex).getInRoads();
+			List<Road> lr = getList().get(rowIndex).getInRoads();
 			o = "";
 			for(int i = 0; i < lr.size(); i++) {
-				o += lr.get(i).getId() + ":" + _junctions.get(rowIndex).getQueueByRoad().get(lr.get(i));
+				o += lr.get(i).getId() + ":" + getList().get(rowIndex).getQueueByRoad().get(lr.get(i));
 			}
 			break;
 		}
@@ -87,7 +63,7 @@ public class JunctionsTableModel extends AbstractTableModel implements TrafficSi
 
 	@Override
 	public void onAdvanceEnd(RoadMap map, List<Event> events, int time) {
-		setJunctionList(map.getJunctions());
+		setList(map.getJunctions());
 	}
 
 	@Override
@@ -95,13 +71,12 @@ public class JunctionsTableModel extends AbstractTableModel implements TrafficSi
 
 	@Override
 	public void onReset(RoadMap map, List<Event> events, int time) {
-		setJunctionList(map.getJunctions());
+		setList(map.getJunctions());
 	}
 
 	@Override
 	public void onRegister(RoadMap map, List<Event> events, int time) {
-		_junctions = new ArrayList<>();
-		setJunctionList(map.getJunctions());
+		setList(map.getJunctions());
 	}
 
 	@Override
