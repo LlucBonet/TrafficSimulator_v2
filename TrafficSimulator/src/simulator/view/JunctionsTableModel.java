@@ -1,6 +1,9 @@
 package simulator.view;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.table.AbstractTableModel;
 
 import simulator.control.Controller;
 import simulator.model.Event;
@@ -9,21 +12,41 @@ import simulator.model.Road;
 import simulator.model.RoadMap;
 import simulator.model.TrafficSimObserver;
 
-public class JunctionsTableModel extends TableModel<Junction> implements TrafficSimObserver {
+public class JunctionsTableModel extends AbstractTableModel implements TrafficSimObserver {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private List<Junction> _junctions;
 	private String[] _colNames = {"Id", "Green", "Queues"};
 	private Controller _ctrl;
 	
 	public JunctionsTableModel(Controller ctrl) {
 		_ctrl = ctrl;
+		_junctions = new ArrayList<>();
 		_ctrl.addObserver(this);
 	}
 
+	@Override
+	public boolean isCellEditable(int row, int column) {
+		return false;
+	}
+	
+	@Override
+	public int getRowCount() {
+		return _junctions == null ? 0 : _junctions.size();
+	}
+	
+	public void update() {
+		fireTableDataChanged();
+	}
+
+	public void setList(List<Junction> e) {
+		_junctions = e;
+		update();
+	}
 	@Override
 	public String getColumnName(int col) {
 		return _colNames[col];
@@ -31,27 +54,28 @@ public class JunctionsTableModel extends TableModel<Junction> implements Traffic
 
 	@Override
 	public int getColumnCount() {
-		return _colNames.length;
+		return _colNames.length;	
 	}
+
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Object o = null;
 		switch(columnIndex) {
 		case 0:
-			o = getList().get(rowIndex).getId();
+			o = _junctions.get(rowIndex).getId();
 			break;
 		case 1:
-			int index = getList().get(rowIndex).getGreenLightIndex();
+			int index = _junctions.get(rowIndex).getGreenLightIndex();
 			if(index == -1) o = "NONE";
 			else
-				o = getList().get(rowIndex).getInRoads().get(index);
+				o = _junctions.get(rowIndex).getInRoads().get(index);
 			break;
 		case 2:
-			List<Road> lr = getList().get(rowIndex).getInRoads();
+			List<Road> lr = _junctions.get(rowIndex).getInRoads();
 			o = "";
 			for(int i = 0; i < lr.size(); i++) {
-				o += lr.get(i).getId() + ":" + getList().get(rowIndex).getQueueByRoad().get(lr.get(i));
+				o += lr.get(i).getId() + ":" + _junctions.get(rowIndex).getQueueByRoad().get(lr.get(i));
 			}
 			break;
 		}

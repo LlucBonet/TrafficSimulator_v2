@@ -6,11 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,9 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import simulator.control.Controller;
 import simulator.misc.Pair;
@@ -54,23 +47,17 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	private File _file;
 	
 	private JButton _loadButton;
-	private JButton _saveButton;
-	private JButton _resumeButton;
 	private JButton _changeCO2ClassButton;
 	private JButton _changeWeatherButton;
 	private JButton _runButton;
 	private JButton _stopButton;
-	private JButton _resetButton;
 
 	
 	private final String LOAD = "load";
-	private final String SAVE = "save";
-	private final String RESUME = "resume";
 	private final String CHANGECO2 = "changeCO2";
 	private final String CHANGEWEATHER = "changeWeather";
 	private final String RUN = "run";
 	private final String STOP = "stop";
-	private final String RESET = "reset";
 	private final String EXIT = "exit";
 	
 	private JSpinner _ticksSpinner;
@@ -99,8 +86,6 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	private void initGUI() {
 		setLayout(new BorderLayout());
 		
-		//_menuBar = createMenuBar();
-		//add(_menuBar, BorderLayout.PAGE_START);
 		_toolBar = createToolBar();
 		add(_toolBar, BorderLayout.PAGE_START);
 	}
@@ -116,22 +101,6 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 		_loadButton.setIcon(new ImageIcon("resources/icons/open.png"));
 		_loadButton.addActionListener(this);
 		toolBar.add(_loadButton);
-		
-		//save
-		_saveButton = new JButton();
-		_saveButton.setToolTipText("Save progress");
-		_saveButton.setActionCommand(SAVE);
-		_saveButton.setIcon(new ImageIcon("resources/icons/save.png"));
-		_saveButton.addActionListener(this);
-		toolBar.add(_saveButton);
-		
-		//resume
-		_resumeButton = new JButton();
-		_resumeButton.setToolTipText("Resume");
-		_resumeButton.setActionCommand(SAVE);
-		_resumeButton.setIcon(new ImageIcon("resources/icons/resume.jpg"));
-		_resumeButton.addActionListener(this);
-		toolBar.add(_resumeButton);
 		
 		toolBar.addSeparator();
 		
@@ -168,14 +137,6 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 		_stopButton.setIcon(new ImageIcon("resources/icons/stop.png"));
 		_stopButton.addActionListener(this);
 		toolBar.add(_stopButton);
-		
-		//reset
-		_resetButton = new JButton();
-		_resetButton.setToolTipText("Reset");
-		_resetButton.setActionCommand(RESET);
-		_resetButton.setIcon(new ImageIcon("resources/icons/reset.jpg"));
-		_resetButton.addActionListener(this);
-		toolBar.add(_resetButton);
 		
 		//ticks
 		JLabel ticks = new JLabel("Ticks: ");
@@ -220,39 +181,36 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 			System.out.println("load cancelled by user");
 		}
 	}
+
+//	private void saveFile() {
+//		_fc.setCurrentDirectory(new File("resources/tmp"));
+//		final int selection = _fc.showOpenDialog(_parent);
+//		if(selection == JFileChooser.APPROVE_OPTION) {
+//			File file = _fc.getSelectedFile();
+//			writeFile(file);
+//		}
+//	}
+//	
+//	private void writeFile(File file) {
+//		OutputStream out;
+//		try {
+//			out = new FileOutputStream(file);
+//			if(out != null) {
+//				PrintStream p = new PrintStream(out);
+//				JSONObject obj = new JSONObject();
+//				JSONArray arr = new JSONArray();
+//				arr.put(_ctrl.report());
+//	
+//				obj.put("time_" + _time, arr);
+//				p.println(obj.toString());
+//				p.close();
+//			}	
+//		} catch (FileNotFoundException e) {
+//			onError(e.getLocalizedMessage());
+//		}
+//		
+//	}
 	
-	private void saveFile() {
-		_fc.setCurrentDirectory(new File("resources/tmp"));
-		final int selection = _fc.showOpenDialog(_parent);
-		if(selection == JFileChooser.APPROVE_OPTION) {
-			File file = _fc.getSelectedFile();
-			writeFile(file);
-		}
-	}
-	
-	private void writeFile(File file) {
-		OutputStream out;
-		try {
-			out = new FileOutputStream(file);
-			if(out != null) {
-				PrintStream p = new PrintStream(out);
-				JSONObject obj = new JSONObject();
-				JSONArray arr = new JSONArray();
-				arr.put(_ctrl.report());
-	
-				obj.put("time_" + _time, arr);
-				p.println(obj.toString());
-				p.close();
-			}	
-		} catch (FileNotFoundException e) {
-			onError(e.getLocalizedMessage());
-		}
-		
-	}
-	
-	void resume() {
-//		run_sim()
-	}
 	
 	public void changeCO2Class() {
 		ChangeCO2ClassDialog dialog = new ChangeCO2ClassDialog((Frame) SwingUtilities.getWindowAncestor(this));
@@ -317,24 +275,21 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 		_stopped = true;
 	}
 	
-	private void reset() {
-		_ctrl.reset();
-		try {
-			_ctrl.loadEvents(null);
-		} catch (Exception e) {
-			onError("Archivo no válido: " + e.getLocalizedMessage());
-		}
-	}
+//	private void reset() {
+//		_ctrl.reset();
+//		try {
+//			_ctrl.loadEvents(null);
+//		} catch (Exception e) {
+//			onError("Archivo no válido: " + e.getLocalizedMessage());
+//		}
+//	}
 	
 	private void enableToolBar(boolean enable) {
 		this._loadButton.setEnabled(enable);
-		this._saveButton.setEnabled(enable);
-		this._resumeButton.setEnabled(enable);
 		this._changeCO2ClassButton.setEnabled(enable);
 		this._changeWeatherButton.setEnabled(enable);
 		this._runButton.setEnabled(enable);
 		this._stopButton.setEnabled(!_stopped);
-		this._resetButton.setEnabled(enable);
 	}
 	
 	private void exit() {
@@ -349,13 +304,10 @@ public class ControlPanel extends JPanel implements TrafficSimObserver, ActionLi
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(LOAD.equals(e.getActionCommand())) loadFile();
-		else if(SAVE.equals(e.getActionCommand())) saveFile();
-		else if(RESUME.equals(e.getActionCommand())) resume();
 		else if(CHANGECO2.equals(e.getActionCommand())) changeCO2Class();
 		else if(CHANGEWEATHER.equals(e.getActionCommand())) changeWeather();
 		else if(RUN.equals(e.getActionCommand())) run();
 		else if(STOP.equals(e.getActionCommand())) stop();
-		else if(RESET.equals(e.getActionCommand())) reset();
 		else if(EXIT.equals(e.getActionCommand())) exit();	
 	}
 	

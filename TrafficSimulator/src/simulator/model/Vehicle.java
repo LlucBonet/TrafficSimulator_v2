@@ -130,8 +130,8 @@ public class Vehicle extends SimulatedObject implements Comparable<Vehicle> {
 	
 	@Override
 	public int compareTo(Vehicle o) { //debe estar siempre ordenada por la localizaci�n de los veh�culos
-		//(orden descendente). Observa que puede haber varios veh�culos en la misma
-//		localizaci�n. Sin embargo, su orden de llegada a esa localizaci�n debe preservarse
+		//(orden descendente). Observa que puede haber varios vehiculos en la misma
+//		localizacion. Sin embargo, su orden de llegada a esa localizaci�n debe preservarse
 //		en la lista
 		if(this._location > o._location) return -1;
 		if(this._location < o._location) return 1;

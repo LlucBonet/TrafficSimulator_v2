@@ -1,6 +1,9 @@
 package simulator.view;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.table.AbstractTableModel;
 
 import simulator.control.Controller;
 import simulator.model.Event;
@@ -8,21 +11,41 @@ import simulator.model.Road;
 import simulator.model.RoadMap;
 import simulator.model.TrafficSimObserver;
 
-public class RoadsTableModel extends TableModel<Road> implements TrafficSimObserver {
+public class RoadsTableModel extends AbstractTableModel implements TrafficSimObserver {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private List<Road> _roads;
 	private Controller _ctrl;
 	private String[] _colNames = {"Id", "Length", "Weather", "Max. Speed", "Speed Limit", "Total CO2", "CO2 Limit"}; 
 	
 	public RoadsTableModel(Controller ctrl) {
 		_ctrl = ctrl;
+		_roads = new ArrayList<>();
 		_ctrl.addObserver(this);
 	}
 	
+	@Override
+	public boolean isCellEditable(int row, int column) {
+		return false;
+	}
+	
+	@Override
+	public int getRowCount() {
+		return _roads == null ? 0 : _roads.size();
+	}
+	
+	public void update() {
+		fireTableDataChanged();
+	}
+
+	public void setList(List<Road> e) {
+		_roads = e;
+		update();
+	}
 	@Override
 	public String getColumnName(int col) {
 		return _colNames[col];
@@ -30,7 +53,7 @@ public class RoadsTableModel extends TableModel<Road> implements TrafficSimObser
 
 	@Override
 	public int getColumnCount() {
-		return _colNames.length;
+		return _colNames.length;	
 	}
 
 	@Override
@@ -38,25 +61,25 @@ public class RoadsTableModel extends TableModel<Road> implements TrafficSimObser
 		Object o = null;
 		switch(columnIndex) {
 		case 0:
-			o = getList().get(rowIndex).getId();
+			o = _roads.get(rowIndex).getId();
 			break;
 		case 1:
-			o = getList().get(rowIndex).getLength();
+			o = _roads.get(rowIndex).getLength();
 			break;
 		case 2:
-			o = getList().get(rowIndex).getWeatherCond().toString();
+			o = _roads.get(rowIndex).getWeatherCond().toString();
 			break;
 		case 3:
-			o = getList().get(rowIndex).getMaxSpeed();
+			o = _roads.get(rowIndex).getMaxSpeed();
 			break;
 		case 4:
-			o = getList().get(rowIndex).getSpeedLimit();
+			o = _roads.get(rowIndex).getSpeedLimit();
 			break;
 		case 5:
-			o = getList().get(rowIndex).getTotalCont();
+			o = _roads.get(rowIndex).getTotalCont();
 			break;
 		case 6:
-			o = getList().get(rowIndex).getContLimit();
+			o = _roads.get(rowIndex).getContLimit();
 			break;
 		}
 		return o;
